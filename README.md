@@ -13,8 +13,10 @@ It can run on virtual Python environment on Win, Mac or Linux.
     - ``` conda activate rafi-sql ```
 - Build and install the **nlp_hybrid** package by running:
     - ``` python setup.py install ```
-- Then run the package:
+- Make sure that the *train* and *test* datasets are in the Dataset folder, and conf/nlp.conf file is modified correctly.
+- Then run the nlp_hybrid library interface:
     - ``` nlp_hybrid ```
+    - Finally run all tests by (or type *help* for other commands):
     - ``` all ```
 
  
