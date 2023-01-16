@@ -6,7 +6,8 @@ This is the implementation of "Hybrid Features Extraction Approach using Natural
 It can run on virtual Python environment on Win, Mac or Linux.
 
 - Install Anaconda environment.
-- Open Anaconda Prompt then run these commands in the folder where rafi-sqli.yml file resides. This will create a new Python environment with the required packages:
+- Open Anaconda Prompt and change current directory to the project folder. 
+- Run these commands in the folder, where rafi-sqli.yml file resides. This will create a new Python environment with the required packages:
     -  conda env create -f rafi-sqli.yml
 - Activate the environment
     - conda activate rafi-sql
