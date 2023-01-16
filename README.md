@@ -5,16 +5,16 @@ This is the implementation of "Hybrid Features Extraction Approach using Natural
 ## Setup and Installation
 It can run on virtual Python environment on Win, Mac or Linux.
 
-- Install Anaconda environment.
+- Download and install the [Anaconda](https://www.anaconda.com/products/distribution) environment.
 - Open Anaconda Prompt and change current directory to the project folder. 
-- Run these commands in the folder, where rafi-sqli.yml file resides. This will create a new Python environment with the required packages:
-    -  conda env create -f rafi-sqli.yml
+- Run the following command in the folder, where rafi-sqli.yml file resides. This will create a new Python environment with the required packages:
+    -  ``` conda env create -f rafi-sqli.yml ```
 - Activate the environment
-    - conda activate rafi-sql
+    - ``` conda activate rafi-sql ```
 - Build and install the nlp_hybrid package by running:
-    - python setup.py install
+    - ``` python setup.py install ```
 - Then run the package:
-    - nlp_hybrid
-    - all
+    - ``` nlp_hybrid ```
+    - ``` all ```
 
  
