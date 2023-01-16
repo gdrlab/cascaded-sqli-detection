@@ -1,7 +1,8 @@
 # Hybrid Features Extraction Approach using Natural Language Processing for Improved Detection of SQL Injection Attack
 
 This is the implementation of "Hybrid Features Extraction Approach using Natural Language Processing for Improved Detection of SQL Injection Attack" algorithm. It can load the custom datasets, train various models and demonstrate their inference performances. 
-
+## Requirements
+- [Anaconda](https://www.anaconda.com/products/distribution) environment
 ## Setup and Installation
 It can run on virtual Python environment on Win, Mac or Linux.
 
