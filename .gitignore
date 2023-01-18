@@ -7,6 +7,7 @@ datasets/*
 # exception to the rule
 !datasets/.gitkeep
 .ipynb_checkpoints 
+__pycache__
 
 # Compiled source #
 ###################
