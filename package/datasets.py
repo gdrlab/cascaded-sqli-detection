@@ -59,11 +59,11 @@ def load_datasets_from_separate_files():
 
 	# Load Training dataset
 	logging.debug('Loading training dataset...')
-	data_train = pd.read_csv(DATASETS_DIRECTORY + package.configurations.TRAINING_DATASET_FILE, sep='\t\t\t', engine='python')
+	data_train = pd.read_csv(DATASETS_DIRECTORY + package.configurations.TRAINING_DATASET_FILE, sep='\t', engine='python')
 
 	# Load Testing dataset
 	logging.debug('Loading testing dataset...')
-	data_test = pd.read_csv(DATASETS_DIRECTORY + package.configurations.TESTING_DATASET_FILE, sep='\t\t\t', engine='python')
+	data_test = pd.read_csv(DATASETS_DIRECTORY + package.configurations.TESTING_DATASET_FILE, sep='\t', engine='python')
 	
 	
 	
