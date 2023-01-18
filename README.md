@@ -29,6 +29,8 @@ It can run on virtual Python environment on Win, Mac or Linux.
 
     - The original code required datasets with 'delimiter=three tabs'. This is no longer supported by Pandas data frame. So, It has been changed to support single tab delimited dataset. If you need to use the old code on the old datasets, you can use Release v0.0.12
 	- utils/clean-kaggle-sqli-dataset-and-split.ipynb file is created for cleaning Kaggle SQLi dataset and splitting it into train-test files.
+	- utils/convert-old-dataset-to-new-single-tab.ipynb file is created for converting old three tabs delimited dataset to single tab.
+	- utils/dataset-train-test-splitter.ipynb file is created for splitting the given dataset to train and test parts.
 
 - Release v0.0.12
 
