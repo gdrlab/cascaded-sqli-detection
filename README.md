@@ -34,7 +34,7 @@ It can run on virtual Python environment on Win, Mac or Linux.
 
 - Release v0.0.12
 
-    - This is the original , the first code from Rafi.
+    - This is the original , the first code from Rafi. It works with Python 3 (the very first one was Python 2)
 
 
  
