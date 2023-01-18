@@ -7,7 +7,9 @@ dependencies:
   - nltk
   - scikit-learn
   - pandas
+  - pandas-profiling
   - xgboost
   - jupyter
   - scipy
   - numpy
+  - seaborn

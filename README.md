@@ -19,5 +19,8 @@ It can run on virtual Python environment on Win, Mac or Linux.
     - ``` nlp_hybrid ```
     - Finally run all tests by (or type *help* for other commands):
     - ``` all ```
+## Troubleshot
+- if something goes wrong or you change the code, clean the installed folders and rebuild it:
+    - ``` python setup.py clean --all ```
 
  
