@@ -5,7 +5,8 @@ dist/
 build/
 datasets/*
 # exception to the rule
-!datasets/.gitkeep 
+!datasets/.gitkeep
+.ipynb_checkpoints 
 
 # Compiled source #
 ###################

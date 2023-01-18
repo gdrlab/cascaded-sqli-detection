@@ -22,5 +22,15 @@ It can run on virtual Python environment on Win, Mac or Linux.
 ## Troubleshot
 - if something goes wrong or you change the code, clean the installed folders and rebuild it:
     - ``` python setup.py clean --all ```
+## Release notes
+- Release (Under development - The current code)
+
+    - The original code required datasets with 'delimiter=three tabs'. This is no longer supported by Pandas data frame. So, It has been changed to support single tab delimited dataset. If you need to use the old code on the old datasets, you can use Release v0.0.12
+	- utils/clean-kaggle-sqli-dataset-and-split.ipynb file is created for cleaning Kaggle SQLi dataset and splitting it into train-test files.
+
+- Release v0.0.12
+
+    - This is the original , the first code from Rafi.
+
 
  
