@@ -8,6 +8,7 @@ datasets/*
 !datasets/.gitkeep
 .ipynb_checkpoints 
 __pycache__
+.vscode
 
 # Compiled source #
 ###################
