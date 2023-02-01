@@ -161,9 +161,11 @@ def processTheCommand(command):
         if commandParts[1]=="bow":
 
             if commandParts[2]=="nb":
+                package.record.set_current_method(f"{commandParts[1]}_{commandParts[2]}" )
                 package.bag_of_words.analyze_naive_bayes()
 
             elif commandParts[2]=="xgboost":
+                package.record.set_current_method(f"{commandParts[1]}_{commandParts[2]}" )
                 package.bag_of_words.analyze_xgboost()
 
             elif commandParts[2]=="svm":
@@ -316,24 +318,25 @@ def software_command_loop():
                 
                 processTheCommand("analyze bow nb")
                 processTheCommand("analyze bow xgboost")
-                processTheCommand("analyze bow svm")
+                # processTheCommand("analyze bow svm")
                 
-                processTheCommand("analyze boc nb")
-                processTheCommand("analyze boc xgboost")
-                processTheCommand("analyze boc svm")
+                # processTheCommand("analyze boc nb")
+                # processTheCommand("analyze boc xgboost")
+                # processTheCommand("analyze boc svm")
 
-                processTheCommand("analyze tfidf nb")
-                processTheCommand("analyze tfidf xgboost")
-                processTheCommand("analyze tfidf svm")
+                # processTheCommand("analyze tfidf nb")
+                # processTheCommand("analyze tfidf xgboost")
+                # processTheCommand("analyze tfidf svm")
 
-                processTheCommand("analyze tfidfng nb")
-                processTheCommand("analyze tfidfng xgboost")
-                processTheCommand("analyze tfidfng svm")
+                # processTheCommand("analyze tfidfng nb")
+                # processTheCommand("analyze tfidfng xgboost")
+                # processTheCommand("analyze tfidfng svm")
 
-                processTheCommand("hybrid1")
-                processTheCommand("hybrid2")
-                processTheCommand("hybrid3")
-                processTheCommand("hybrid4")            
+                # processTheCommand("hybrid1")
+                # processTheCommand("hybrid2")
+                # processTheCommand("hybrid3")
+                # processTheCommand("hybrid4")
+                print(package.record.to_dataFrame())            
             
             elif command=="":
                 continue
@@ -369,6 +372,9 @@ def software_initalization():
 
     # Update the logger based on configuration file
     package.logger.updateLogger()
+
+    # Initialize the recorder. Creates an empty Pandas dataframe
+    package.record.init()
 
     logging.debug('Starting command loop thread')
     threads = []

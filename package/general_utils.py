@@ -16,7 +16,7 @@
 
 """
 
-
+import package.record
 
 
 keep_software_running = 1
