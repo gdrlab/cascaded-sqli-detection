@@ -35,8 +35,9 @@ There are two ways to run the code. It can be directly executed as a python scri
     - ``` python setup.py clean --all ```
 - Only 'all' command might work properly. The others have not been tested after modifications.
 ## Release notes
-- Release (Under development - The current code)
-
+- Release (Under development)
+    - tba
+- Release (v0.1.0)
     - Results are saved to a Pandas dataframe. It is saved to a pickle file.
     - Results can be visualized using Utils/Data visualize . jpy notebook.
     - The original code required datasets with 'delimiter=three tabs'. This is no longer supported by Pandas data frame. So, It has been changed to support single tab delimited dataset. If you need to use the old code on the old datasets, you can use Release v0.0.12
