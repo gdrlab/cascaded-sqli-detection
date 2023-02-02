@@ -26,6 +26,7 @@ import package.tf_idf_n_gram
 import package.configurations
 import package.general_utils
 import package.logger
+import package.record
 
 import logging
 import time
@@ -118,7 +119,8 @@ def analyze_boc():
 		# Analyze Predictions/Results
 		package.multinomial_naive_bayes.analyze_predictions(boc_final_verdict, package.bag_of_characters.y_test)	
 		
-		
+		package.record.add_or_update_field(field="training time", value=training_time)
+		package.record.add_or_update_field(field="testing time", value=testing_time)
 		if package.configurations.PRINT_LATENCIES.lower() == "yes":
 		
 			print("     Training Time  :{training_time}s")  
@@ -185,7 +187,8 @@ def analyze_tfidf():
 		# Analyze Predictions/Results
 		package.multinomial_naive_bayes.analyze_predictions(tfidf_final_verdict, package.tf_idf.y_test)	
 		
-		
+		package.record.add_or_update_field(field="training time", value=training_time)
+		package.record.add_or_update_field(field="testing time", value=testing_time)
 		if package.configurations.PRINT_LATENCIES.lower() == "yes":
 		
 			print(f"     Training Time  :{training_time}s")  
@@ -248,7 +251,8 @@ def analyze_tfidf_ng():
 		# Analyze Predictions/Results
 		package.multinomial_naive_bayes.analyze_predictions(tfidfng_final_verdict, package.tf_idf_n_gram.y_test)	
 		
-		
+		package.record.add_or_update_field(field="training time", value=training_time)
+		package.record.add_or_update_field(field="testing time", value=testing_time)
 		if package.configurations.PRINT_LATENCIES.lower() == "yes":
 		
 			print(f"     Training Time  :{training_time}s")  

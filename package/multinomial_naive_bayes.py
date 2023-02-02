@@ -19,6 +19,7 @@
 import package.datasets
 import package.configurations
 import package.logger
+import package.record
 
 import logging
 
@@ -116,6 +117,8 @@ def analyze_predictions(nb_predictions, y_test):
 
 
 	overall_accuracy_percent = metrics.accuracy_score(y_test, nb_predictions)*100 
+	package.record.add_or_update_field("overall_accuracy", overall_accuracy_percent)
+	package.record.metrics(y_test, nb_predictions)
 	print("     Overall Accuracy: %.2f%% " % overall_accuracy_percent) 
 	
 	print(f"     True Positive  :{true_positive}")
