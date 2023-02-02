@@ -33,9 +33,12 @@ There are two ways to run the code. It can be directly executed as a python scri
 ## Troubleshot
 - if something goes wrong or you change the code, clean the installed folders and rebuild it:
     - ``` python setup.py clean --all ```
+- Only 'all' command might work properly. The others have not been tested after modifications.
 ## Release notes
 - Release (Under development - The current code)
 
+    - Results are saved to a Pandas dataframe. It is saved to a pickle file.
+    - Results can be visualized using Utils/Data visualize . jpy notebook.
     - The original code required datasets with 'delimiter=three tabs'. This is no longer supported by Pandas data frame. So, It has been changed to support single tab delimited dataset. If you need to use the old code on the old datasets, you can use Release v0.0.12
 	- utils/clean-kaggle-sqli-dataset-and-split.ipynb file is created for cleaning Kaggle SQLi dataset and splitting it into train-test files.
 	- utils/convert-old-dataset-to-new-single-tab.ipynb file is created for converting old three tabs delimited dataset to single tab.
