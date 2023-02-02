@@ -240,7 +240,8 @@ def analyze_naive_bayes():
 		# Analyze Predictions/Results
 		package.multinomial_naive_bayes.analyze_predictions(nb_predictions, y_test)	
 		
-		
+		package.record.add_or_update_field(field="training time", value=training_time)
+		package.record.add_or_update_field(field="testing time", value=testing_time)
 		if package.configurations.PRINT_LATENCIES.lower() == "yes":
 		
 			print(f"     Training Time  :{training_time}s") 
@@ -297,7 +298,8 @@ def analyze_xgboost():
 		# Analyze Predictions/Results
 		package.xgboost_model.analyze_predictions(xgboost_predictions, y_test)	
 		
-		
+		package.record.add_or_update_field(field="training time", value=training_time)
+		package.record.add_or_update_field(field="testing time", value=testing_time)
 		if package.configurations.PRINT_LATENCIES.lower() == "yes":
 		
 			print(f"     Training Time  :{training_time}s")  
@@ -356,7 +358,8 @@ def analyze_svm():
 		# Analyze Predictions/Results
 		package.svm_model.analyze_predictions(svm_predictions, y_test)	
 		
-		
+		package.record.add_or_update_field(field="training time", value=training_time)
+		package.record.add_or_update_field(field="testing time", value=testing_time)
 		if package.configurations.PRINT_LATENCIES.lower() == "yes":
 		
 			print(f"     Training Time  :{training_time}s")  

@@ -169,6 +169,7 @@ def processTheCommand(command):
                 package.bag_of_words.analyze_xgboost()
 
             elif commandParts[2]=="svm":
+                package.record.set_current_method(f"{commandParts[1]}_{commandParts[2]}" )
                 package.bag_of_words.analyze_svm()
                                                 
             else:
@@ -178,12 +179,15 @@ def processTheCommand(command):
         elif commandParts[1]=="boc":
 
             if commandParts[2]=="nb":
+                package.record.set_current_method(f"{commandParts[1]}_{commandParts[2]}" )
                 package.bag_of_characters.analyze_naive_bayes()
 
             elif commandParts[2]=="xgboost":
+                package.record.set_current_method(f"{commandParts[1]}_{commandParts[2]}" )
                 package.bag_of_characters.analyze_xgboost()
 
             elif commandParts[2]=="svm":
+                package.record.set_current_method(f"{commandParts[1]}_{commandParts[2]}" )
                 package.bag_of_characters.analyze_svm()
                                                 
             else:
@@ -193,12 +197,15 @@ def processTheCommand(command):
         elif commandParts[1]=="tfidf":
 
             if commandParts[2]=="nb":
+                package.record.set_current_method(f"{commandParts[1]}_{commandParts[2]}" )
                 package.tf_idf.analyze_naive_bayes()
 
             elif commandParts[2]=="xgboost":
+                package.record.set_current_method(f"{commandParts[1]}_{commandParts[2]}" )
                 package.tf_idf.analyze_xgboost()
 
             elif commandParts[2]=="svm":
+                package.record.set_current_method(f"{commandParts[1]}_{commandParts[2]}" )
                 package.tf_idf.analyze_svm()
                                                 
             else:
@@ -208,12 +215,15 @@ def processTheCommand(command):
         elif commandParts[1]=="tfidfng":
 
             if commandParts[2]=="nb":
+                package.record.set_current_method(f"{commandParts[1]}_{commandParts[2]}" )
                 package.tf_idf_n_gram.analyze_naive_bayes()
 
             elif commandParts[2]=="xgboost":
+                package.record.set_current_method(f"{commandParts[1]}_{commandParts[2]}" )
                 package.tf_idf_n_gram.analyze_xgboost()
 
             elif commandParts[2]=="svm":
+                package.record.set_current_method(f"{commandParts[1]}_{commandParts[2]}" )
                 package.tf_idf_n_gram.analyze_svm()
                                                 
             else:
@@ -227,26 +237,37 @@ def processTheCommand(command):
             
     elif commandParts[0]=="hybrid1":
         package.hybrid1_averaging_nlp.extract_features()
+        package.record.set_current_method(f"{commandParts[0]}_nb" )
         package.hybrid1_averaging_nlp.analyze_naive_bayes()
+        package.record.set_current_method(f"{commandParts[0]}_xgboost" )
         package.hybrid1_averaging_nlp.analyze_xgboost()
+        package.record.set_current_method(f"{commandParts[0]}_svm" )
         package.hybrid1_averaging_nlp.analyze_svm()
+        package.record.set_current_method(f"{commandParts[0]}_all_ml_averaged" )
         package.hybrid1_averaging_nlp.all_ml_averaged()
 
     elif commandParts[0]=="hybrid2":
         package.hybrid2_averaging_ml.extract_features()
+        package.record.set_current_method(f"{commandParts[0]}_boc" )
         package.hybrid2_averaging_ml.analyze_boc()
+        package.record.set_current_method(f"{commandParts[0]}_tfidf" )
         package.hybrid2_averaging_ml.analyze_tfidf()
+        package.record.set_current_method(f"{commandParts[0]}_tfidf_ng" )
         package.hybrid2_averaging_ml.analyze_tfidf_ng()
 
     elif commandParts[0]=="hybrid3":
         package.hybrid3_avg_best_prf.extract_features()
+        package.record.set_current_method(f"{commandParts[0]}" )
         package.hybrid3_avg_best_prf.analyze_hybrid3()
 
             
     elif commandParts[0]=="hybrid4":
         package.hybrid4_merging_nlp_features.extract_features()
+        package.record.set_current_method(f"{commandParts[0]}_nb" )
         package.hybrid4_merging_nlp_features.analyze_naive_bayes()
+        package.record.set_current_method(f"{commandParts[0]}_xgboost" )
         package.hybrid4_merging_nlp_features.analyze_xgboost()
+        package.record.set_current_method(f"{commandParts[0]}_svm" )
         package.hybrid4_merging_nlp_features.analyze_svm()
 
 
@@ -318,25 +339,26 @@ def software_command_loop():
                 
                 processTheCommand("analyze bow nb")
                 processTheCommand("analyze bow xgboost")
-                # processTheCommand("analyze bow svm")
+                processTheCommand("analyze bow svm")
                 
-                # processTheCommand("analyze boc nb")
-                # processTheCommand("analyze boc xgboost")
-                # processTheCommand("analyze boc svm")
+                processTheCommand("analyze boc nb")
+                processTheCommand("analyze boc xgboost")
+                processTheCommand("analyze boc svm")
 
-                # processTheCommand("analyze tfidf nb")
-                # processTheCommand("analyze tfidf xgboost")
-                # processTheCommand("analyze tfidf svm")
+                processTheCommand("analyze tfidf nb")
+                processTheCommand("analyze tfidf xgboost")
+                processTheCommand("analyze tfidf svm")
 
-                # processTheCommand("analyze tfidfng nb")
-                # processTheCommand("analyze tfidfng xgboost")
-                # processTheCommand("analyze tfidfng svm")
+                processTheCommand("analyze tfidfng nb")
+                processTheCommand("analyze tfidfng xgboost")
+                processTheCommand("analyze tfidfng svm")
 
-                # processTheCommand("hybrid1")
-                # processTheCommand("hybrid2")
-                # processTheCommand("hybrid3")
-                # processTheCommand("hybrid4")
-                print(package.record.to_dataFrame())            
+                processTheCommand("hybrid1")
+                processTheCommand("hybrid2")
+                processTheCommand("hybrid3")
+                processTheCommand("hybrid4")
+                print(package.record.to_dataFrame())
+                package.record.df_to_pickle()           
             
             elif command=="":
                 continue

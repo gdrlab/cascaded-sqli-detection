@@ -118,7 +118,8 @@ def analyze_hybrid3():
 		# Analyze Predictions/Results
 		package.multinomial_naive_bayes.analyze_predictions(final_verdict, package.bag_of_characters.y_test)	
 		
-		
+		package.record.add_or_update_field(field="training time", value=training_time)
+		package.record.add_or_update_field(field="testing time", value=testing_time)
 		if package.configurations.PRINT_LATENCIES.lower() == "yes":
 		
 			print(f"     Training Time  :{training_time}s")  
