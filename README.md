@@ -1,17 +1,22 @@
 # Hybrid Features Extraction Approach using Natural Language Processing for Improved Detection of SQL Injection Attack
 
 This is the implementation of "Hybrid Features Extraction Approach using Natural Language Processing for Improved Detection of SQL Injection Attack" algorithm. It can load the custom datasets, train various models and demonstrate their inference performances. 
-## Requirements
-- [Anaconda](https://www.anaconda.com/products/distribution) environment
+## Requirements  
+(Mamba package search is significantly faster than Anaconda).  
+- (recommended) [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge) (or [Anaconda](https://www.anaconda.com/products/distribution) environment)
 ## Setup
 It can run on virtual Python environment on Win, Mac or Linux.
 
-- Download and install the [Anaconda](https://www.anaconda.com/products/distribution) environment.
-- Open Anaconda Prompt and change current directory to the project folder. 
+- Download and install the [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge) environment.
+- Open Mamda Prompt and change current directory to the project folder. 
+- (Optional) If you have GPU and want to use it update the yml file to contain "tensorflow-gpu".(this might not work. Not tested)
 - Run the following command in the folder, where **rafi-sqli.yml** file resides. This will create a new Python environment with the required packages:
-    -  ``` conda env create -f rafi-sqli.yml ```
+    -  ``` mamba env create -f rafi-sqli.yml ```
 - Activate the environment
-    - ``` conda activate rafi-sql ```
+    - ``` mamba activate rafi-sql ```
+- Install the following packages:
+    - ``` pip install -q -U "tensorflow-text==2.8.*" ```
+    - ``` pip install -q tf-models-official==2.7.0 ```
 
 ### (Optional) Build and install as a package
 - Build and install the **nlp_hybrid** package by running:

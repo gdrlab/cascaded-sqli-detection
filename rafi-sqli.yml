@@ -1,16 +1,20 @@
 name: rafi-sqli
 channels:
   - conda-forge
-  - defaults
+  - nodefaults
 dependencies:
-  - python=3.*
+  - python
+  #- tf-models-official
+  - tensorflow
+  - tensorflow-hub
   - nltk
   - scikit-learn
   - pandas
-  - pandas-profiling
+  #- pandas-profiling
   - xgboost
   - jupyter
   - scipy
   - numpy
   - seaborn
-  - wandb
+  #- wandb
+
