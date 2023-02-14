@@ -121,6 +121,7 @@ def analyze_boc():
 		
 		package.record.add_or_update_field(field="training time", value=training_time)
 		package.record.add_or_update_field(field="testing time", value=testing_time)
+		
 		if package.configurations.PRINT_LATENCIES.lower() == "yes":
 		
 			print("     Training Time  :{training_time}s")  
@@ -189,6 +190,7 @@ def analyze_tfidf():
 		
 		package.record.add_or_update_field(field="training time", value=training_time)
 		package.record.add_or_update_field(field="testing time", value=testing_time)
+		
 		if package.configurations.PRINT_LATENCIES.lower() == "yes":
 		
 			print(f"     Training Time  :{training_time}s")  
@@ -253,6 +255,7 @@ def analyze_tfidf_ng():
 		
 		package.record.add_or_update_field(field="training time", value=training_time)
 		package.record.add_or_update_field(field="testing time", value=testing_time)
+		
 		if package.configurations.PRINT_LATENCIES.lower() == "yes":
 		
 			print(f"     Training Time  :{training_time}s")  

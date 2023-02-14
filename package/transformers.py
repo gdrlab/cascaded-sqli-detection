@@ -316,6 +316,7 @@ def analyze_transformers():
 
     package.record.add_or_update_field(field="training time", value=training_time)
     package.record.add_or_update_field(field="testing time", value=testing_time)
+		
 
 
 def build_classifier_model():

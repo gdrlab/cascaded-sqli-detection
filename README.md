@@ -8,12 +8,12 @@ This is the implementation of "Hybrid Features Extraction Approach using Natural
 It can run on virtual Python environment on Win, Mac or Linux.
 
 - Download and install the [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge) environment.
-- Open Mamda Prompt and change current directory to the project folder. 
+- Open Mamba Prompt and change current directory to the project folder. 
 - (Optional) If you have GPU and want to use it update the yml file to contain "tensorflow-gpu".(this might not work. Not tested)
 - Run the following command in the folder, where **rafi-sqli.yml** file resides. This will create a new Python environment with the required packages:
     -  ``` mamba env create -f rafi-sqli.yml ```
 - Activate the environment
-    - ``` mamba activate rafi-sql ```
+    - ``` mamba activate rafi-sqli ```
 - Install the following packages:
     - ``` pip install -q -U "tensorflow-text==2.8.*" ```
     - ``` pip install -q tf-models-official==2.7.0 ```
@@ -41,7 +41,7 @@ There are two ways to run the code. It can be directly executed as a python scri
 - Only 'all' command might work properly. The others have not been tested after modifications.
 ## Release notes
 - Release (Under development)
-    - tba
+    - BERT is added to the tests.
 - Release (v0.1.0)
     - Results are saved to a Pandas dataframe. It is saved to a pickle file.
     - Results can be visualized using Utils/Data visualize . jpy notebook.
