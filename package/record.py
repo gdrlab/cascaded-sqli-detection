@@ -17,6 +17,7 @@
 
 
 import package.configurations
+import package.datasets
 import package.general_utils
 import package.logger
 import pandas as pd
@@ -65,7 +66,7 @@ def df_to_pickle():
     currentTime = currentDateAndTime.strftime("%y%m%d_%H%M%S")
     output_filename = f"results_{currentTime}.pkl"
     print(f"Saving results dataframe as pandas pickle to : {cwd}/{output_filename}" ) 
-    dfResults.to_pickle(f"./{output_filename}")
+    dfResults.to_pickle(f"./{output_filename}", protocol=4)
     print("Saved.")
 
 def metrics(y_true, y_pred):
@@ -79,6 +80,18 @@ def metrics(y_true, y_pred):
     package.record.add_or_update_field("fp", fp)
     package.record.add_or_update_field("fn", fn)
     package.record.add_or_update_field("tp", tp)
+    
+    train_file_name = package.configurations.TRAINING_DATASET_FILE
+    test_file_name = package.configurations.TESTING_DATASET_FILE
+    train_size = package.datasets.data_train.shape[0]
+    test_size = package.datasets.data_test.shape[0]
+
+    package.record.add_or_update_field(field="train size", value=train_size)
+    package.record.add_or_update_field(field="test size", value=test_size)
+
+    package.record.add_or_update_field(field="train data", value=train_file_name)
+    package.record.add_or_update_field(field="test data", value=test_file_name)
+    
 
 
 

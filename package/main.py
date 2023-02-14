@@ -27,6 +27,8 @@ import package.hybrid2_averaging_ml
 import package.hybrid3_avg_best_prf
 import package.hybrid4_merging_nlp_features
 
+import package.transformers
+
 import package.configurations
 import package.general_utils
 import package.logger
@@ -270,6 +272,10 @@ def processTheCommand(command):
         package.record.set_current_method(f"{commandParts[0]}_svm" )
         package.hybrid4_merging_nlp_features.analyze_svm()
 
+    elif commandParts[0]=="transformers":
+        package.record.set_current_method(f"{commandParts[0]}_1" )
+        package.transformers.analyze_transformers()
+
 
     elif commandParts[0]=="checkconfigurations":
         package.configurations.check()
@@ -329,8 +335,8 @@ def software_command_loop():
             elif command.lower()=="all":
                 # It performs all software functionalities (For Testing Purpose)
                 processTheCommand("loaddatasets")
-                processTheCommand("printdatasets")
-                processTheCommand("plotdatasets")
+                # processTheCommand("printdatasets")
+                # processTheCommand("plotdatasets")
         
                 processTheCommand("extract features bow")
                 processTheCommand("extract features boc")
@@ -357,6 +363,10 @@ def software_command_loop():
                 processTheCommand("hybrid2")
                 processTheCommand("hybrid3")
                 processTheCommand("hybrid4")
+
+                # processTheCommand("transformers")
+
+
                 print(package.record.to_dataFrame())
                 package.record.df_to_pickle()           
             
