@@ -9,7 +9,7 @@ This is the implementation of "Hybrid Features Extraction Approach using Natural
 The first part (Classical ML methods) can run on virtual Python environment on Win, Mac or Linux.
 
 - Download and install the [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge) environment.
-- Open Mamba Prompt and change current directory to the project folder. 
+- Open Miniforge Prompt and change current directory to the project folder. 
 - (Optional) If you have GPU and want to use it update the yml file to contain "tensorflow-gpu".(this might not work. Not tested)
 - Run the following command in the folder, where **rafi-sqli.yml** file resides. This will create a new Python environment with the required packages:
     -  ``` mamba env create -f rafi-sqli.yml ```
@@ -26,7 +26,7 @@ The first part (Classical ML methods) can run on virtual Python environment on W
 Classical ML methods work in Mamba environment without GPU support. Bert models can run in Google Colab. They need to use GPU. For that reason there are classical ML methods and BERT models are tested separately. Then the results are merged. The following steps explains how to run all tests.
 
 ### Classical ML based methods
-- Activate rafi-sqli environment in the Mamba prompt and run:
+- Activate rafi-sqli environment in the Miniforge prompt and run:
     - ``` python nlp_hybrid.py ```
 
 - Finally, to run all tests by (or type *help* for other commands but not every command is tested):
