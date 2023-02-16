@@ -16,5 +16,7 @@ dependencies:
   - scipy
   - numpy
   - seaborn
+  - scienceplots 
+  - mscorefonts
   #- wandb
 
