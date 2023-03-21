@@ -15,7 +15,7 @@ class TestManager:
     self.feature_extractors_dict = {}
     self.models_dict = {}
 
-  def features_models_cartesian_tests(self, feature_methods, models):
+  def __features_models_cartesian_tests(self, feature_methods, models):
     for feature_method in feature_methods:
       feature_extractor = FeatureExtractor(feature_method)
       feature_extractor.extract_features(
@@ -67,21 +67,53 @@ class TestManager:
   
   def __run_ensemble_tests(self, ensemble_models):
     for ensemble_model in ensemble_models:
+      model = None
       if ensemble_model == 'ensemble_1':
-        self.model = Ensemble_1(self.models_dict, self.feature_extractors_dict)
+        model = Ensemble_1(self.models_dict, self.feature_extractors_dict)
       elif ensemble_model == 'ensemble_2':
         print('self.model = svm.SVC(*args, **kwargs)')
       else:
         raise ValueError(f"Unknown ensemble model: {ensemble_model}")
+      
+      model.feature_method = 'tf-idf, tf-idf_ngram, bag_of_characters'
+      # self.data_manager.x_train, self.data_manager.x_test
+      model.fit(
+        self.data_manager.x_train, self.data_manager.y_train)
+      y_pred = model.predict(self.data_manager.x_test)
 
-  def run_tests(self, feature_methods, classic_models, ensemble_models):
-    self.features_models_cartesian_tests(feature_methods, classic_models)
-    self.__run_ensemble_tests(ensemble_models)
-    self.save_results(Path(self.config['results']['dir']))
+      accuracy = accuracy_score(self.data_manager.y_test, y_pred)
+      precision = precision_score(self.data_manager.y_test, y_pred)
+      recall = recall_score(self.data_manager.y_test, y_pred)
+      f1 = f1_score(self.data_manager.y_test, y_pred)
+      tn, fp, fn, tp = confusion_matrix(self.data_manager.y_test, y_pred).ravel()
 
-  def save_results(self, dir):
+      result = {
+        'feature_method': model.feature_method,
+        'model': ensemble_model,
+        'accuracy': accuracy,
+        'precision': precision,
+        'recall': recall,
+        'f1_score': f1,
+        'tp': tp,
+        'tn': tn,
+        'fp': fp,
+        'fn': fn
+      }
+
+      result.update(self.data_manager.notes)
+      result.update(feature_extractor.notes)
+      result.update(model.notes)
+      result.update({'dataset': self.config['dataset']['path']})
+      self.results.append(result)
+
+  def __save_results(self, dir):
     results_df = pd.DataFrame(self.results)
     timestamp = int(time.time())
     file_name = Path(dir) / f"results_{timestamp}.csv"
     results_df.to_csv(file_name, index=False)
     logger.info(f"Results saved to {file_name}")
+
+  def run_tests(self, feature_methods, classic_models, ensemble_models):
+    self.__features_models_cartesian_tests(feature_methods, classic_models)
+    self.__run_ensemble_tests(ensemble_models)
+    self.__save_results(Path(self.config['results']['dir']))

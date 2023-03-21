@@ -94,6 +94,7 @@ class Model:
 
   def create_model(self, *args, **kwargs):
     print("Parent model class create_model method. This shouldn't have been called.")
+    return
     
   def fit(self, x_train, y_train, *args, **kwargs):
     logger.info(f"Training model: {self.model_name}")
