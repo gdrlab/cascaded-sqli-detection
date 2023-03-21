@@ -61,6 +61,8 @@ Classical ML methods work in Mamba environment without GPU support. Bert models 
 
 - Only 'all' command might work properly. The others have not been tested after modifications.
 ## Release notes
+- Release (version TBA)
+  - 
 - Release (0.3.0) Latex table generation
   - The results are saved to a pkl file in the main folder.
   - the results pickle files can be read and visualized using utils\Demonstrate_test_results.ipynb. This also generates the Latex tables used in the paper.
