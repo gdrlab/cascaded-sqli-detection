@@ -15,6 +15,32 @@ class TestManager:
     self.feature_extractors_dict = {}
     self.models_dict = {}
 
+  def __evaluations(self, y_test, y_pred, model, feature_extractor):
+    accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+    tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+
+    result = {
+      'feature_method': model.feature_method,
+      'model': model.model_name,
+      'accuracy': accuracy,
+      'precision': precision,
+      'recall': recall,
+      'f1_score': f1,
+      'tp': tp,
+      'tn': tn,
+      'fp': fp,
+      'fn': fn
+    }
+
+    result.update(self.data_manager.notes)
+    result.update(feature_extractor.notes)
+    result.update(model.notes)
+    result.update({'dataset': self.config['dataset']['path']})
+    self.results.append(result)
+
   def __features_models_cartesian_tests(self, feature_methods, models):
     for feature_method in feature_methods:
       feature_extractor = FeatureExtractor(feature_method)
@@ -39,37 +65,18 @@ class TestManager:
         model.save_model(file_name)
 
         y_pred = model.predict(feature_extractor.features['test'])
+        self.__evaluations(self.data_manager.y_test, y_pred, model, feature_extractor)
+        
 
-        accuracy = accuracy_score(self.data_manager.y_test, y_pred)
-        precision = precision_score(self.data_manager.y_test, y_pred)
-        recall = recall_score(self.data_manager.y_test, y_pred)
-        f1 = f1_score(self.data_manager.y_test, y_pred)
-        tn, fp, fn, tp = confusion_matrix(self.data_manager.y_test, y_pred).ravel()
 
-        result = {
-          'feature_method': feature_method,
-          'model': model_name,
-          'accuracy': accuracy,
-          'precision': precision,
-          'recall': recall,
-          'f1_score': f1,
-          'tp': tp,
-          'tn': tn,
-          'fp': fp,
-          'fn': fn
-        }
-
-        result.update(self.data_manager.notes)
-        result.update(feature_extractor.notes)
-        result.update(model.notes)
-        result.update({'dataset': self.config['dataset']['path']})
-        self.results.append(result)
-  
   def __run_ensemble_tests(self, ensemble_models):
     for ensemble_model in ensemble_models:
       model = None
+      feature_extractor = None
       if ensemble_model == 'ensemble_1':
-        model = Ensemble_1(self.models_dict, self.feature_extractors_dict)
+        model = Ensemble_1(self.data_manager , self.models_dict, self.feature_extractors_dict)
+        feature_extractor = FeatureExtractor('ensemble_1')
+        
       elif ensemble_model == 'ensemble_2':
         print('self.model = svm.SVC(*args, **kwargs)')
       else:
@@ -77,34 +84,17 @@ class TestManager:
       
       model.feature_method = 'tf-idf, tf-idf_ngram, bag_of_characters'
       # self.data_manager.x_train, self.data_manager.x_test
-      model.fit(
-        self.data_manager.x_train, self.data_manager.y_train)
+      model.fit(self.data_manager.x_train, self.data_manager.y_train)
       y_pred = model.predict(self.data_manager.x_test)
-
-      accuracy = accuracy_score(self.data_manager.y_test, y_pred)
-      precision = precision_score(self.data_manager.y_test, y_pred)
-      recall = recall_score(self.data_manager.y_test, y_pred)
-      f1 = f1_score(self.data_manager.y_test, y_pred)
-      tn, fp, fn, tp = confusion_matrix(self.data_manager.y_test, y_pred).ravel()
-
-      result = {
-        'feature_method': model.feature_method,
-        'model': ensemble_model,
-        'accuracy': accuracy,
-        'precision': precision,
-        'recall': recall,
-        'f1_score': f1,
-        'tp': tp,
-        'tn': tn,
-        'fp': fp,
-        'fn': fn
+      feature_extractor.notes = {
+          'extraction_time': model.feature_latency,
+          'method': 'ensemble_1',
+          'feature_size': model.feature_size,
       }
+      self.model = self #this will be the saved pickle file
+      self.__evaluations(self.data_manager.y_test, y_pred, model, feature_extractor)
 
-      result.update(self.data_manager.notes)
-      result.update(feature_extractor.notes)
-      result.update(model.notes)
-      result.update({'dataset': self.config['dataset']['path']})
-      self.results.append(result)
+      
 
   def __save_results(self, dir):
     results_df = pd.DataFrame(self.results)

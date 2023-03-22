@@ -49,32 +49,42 @@ class FeatureExtractor:
     self.kwargs = kwargs
     self.features = None
     self.notes = {}
+    self.vectorizer = None
 
   def extract_features(self, x_train, x_test):
     start_time = time.perf_counter()
 
     if self.method == 'tf-idf':
-      vectorizer = TfidfVectorizer(*self.args, **self.kwargs)
+      self.vectorizer = TfidfVectorizer(*self.args, **self.kwargs)
     elif self.method == 'tf-idf_ngram':
       # Tokenizer to remove unwanted elements from out data like symbols and numbers
       token = RegexpTokenizer(r'[a-zA-Z0-9]+')
       # Using N-Gram 
-      vectorizer = TfidfVectorizer(
+      self.vectorizer = TfidfVectorizer(
         lowercase=True, stop_words='english', 
         ngram_range = (1, 3), # TODO: parametrize range in config file
         tokenizer = token.tokenize, analyzer='char')
     elif self.method == 'bag_of_words':
-      vectorizer = CountVectorizer(analyzer='word', **self.kwargs)
+      self.vectorizer = CountVectorizer(analyzer='word', **self.kwargs)
     elif self.method == 'bag_of_characters':
-      vectorizer = CountVectorizer(analyzer='char', **self.kwargs)
+      self.vectorizer = CountVectorizer(analyzer='char', **self.kwargs)
+    elif self.method == 'ensemble_1':
+      self.vectorizer = None # created just for keeping latencies
     else:
       raise ValueError(
         f"Unknown feature extraction method: {self.method}")
 
-    self.features = {
-      'train': vectorizer.fit_transform(x_train),
-      'test': vectorizer.transform(x_test),
-    }
+    if self.vectorizer is not None:
+      self.features = {
+        'train': self.vectorizer.fit_transform(x_train),
+        'test': self.vectorizer.transform(x_test),
+      }
+    else:
+      self.features = {
+        'train': [[0]],
+        'test': [[0]],
+      }
+    
 
     end_time = time.perf_counter()
     self.notes = {
@@ -90,23 +100,35 @@ class Model:
     self.model = None
     self.feature_method = ""
     self.notes = {}
-    self.create_model(*args, **kwargs)
+    self._create_model(*args, **kwargs)
 
-  def create_model(self, *args, **kwargs):
+  def _create_model(self, *args, **kwargs):
     print("Parent model class create_model method. This shouldn't have been called.")
     return
-    
+  
+  def _submodel_fit(self, x_train, y_train, *args, **kwargs):
+    self.model.fit(x_train, y_train, *args, **kwargs)
+    return 0
+
+  def _submodel_predict(self, x_test, *args, **kwargs):
+    y_pred = []
+    y_pred = self.model.predict(x_test, *args, **kwargs)
+    return y_pred
+
   def fit(self, x_train, y_train, *args, **kwargs):
     logger.info(f"Training model: {self.model_name}")
     start_time = time.perf_counter()
-    self.model.fit(x_train, y_train, *args, **kwargs)
+    latency = self._submodel_fit(x_train, y_train, *args, **kwargs)
     end_time = time.perf_counter()
-    self.notes['train_time'] = end_time - start_time
+    if latency != 0:
+      self.notes['train_time'] = latency
+    else:
+      self.notes['train_time'] = end_time - start_time
     logger.info(f"Ended training {self.model_name} in: {self.notes['train_time']}sec")
 
   def predict(self, x_test, *args, **kwargs):
     start_time = time.perf_counter()
-    y_pred = self.model.predict(x_test, *args, **kwargs)
+    y_pred = self._submodel_predict(x_test, *args, **kwargs)
     end_time = time.perf_counter()
 
     self.notes['pred_time'] = end_time - start_time

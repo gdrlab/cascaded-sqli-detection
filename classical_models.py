@@ -8,7 +8,7 @@ class Classical_Model(Model):
     super().__init__( model_name, *args, **kwargs)
     self.results = []
 
-  def create_model(self, *args, **kwargs):
+  def _create_model(self, *args, **kwargs):
     if self.model_name == 'xgboost':
       self.model = xgb.XGBClassifier(*args, **kwargs)
     elif self.model_name == 'svm':
