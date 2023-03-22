@@ -59,10 +59,11 @@ class TestManager:
         self.models_dict[model.model_name].update({feature_extractor.method: model})
         
         # Save the trained model
-        timestamp = int(time.time())
-        file_name = (Path(self.config['models']['dir']) 
-                     / f"{model.model_name}_{feature_extractor.method}_{timestamp}.pkl")
-        model.save_model(file_name)
+        if int(self.config['settings']['save_models']) != 0:
+          timestamp = int(time.time())
+          file_name = (Path(self.config['models']['dir']) 
+                      / f"{model.model_name}_{feature_extractor.method}_{timestamp}.pkl")
+          model.save_model(file_name)
 
         y_pred = model.predict(feature_extractor.features['test'])
         self.__evaluations(self.data_manager.y_test, y_pred, model, feature_extractor)
@@ -75,14 +76,14 @@ class TestManager:
       feature_extractor = None
       if ensemble_model == 'ensemble_1':
         model = Ensemble_1(self.data_manager , self.models_dict, self.feature_extractors_dict)
-        feature_extractor = FeatureExtractor('ensemble_1')
-        
+        model.feature_method = 'tf-idf, tf-idf_ngram, bag_of_characters'
+        feature_extractor = FeatureExtractor('ensemble_1') # dummy feature ext. just for keeping latency notes.
       elif ensemble_model == 'ensemble_2':
         print('self.model = svm.SVC(*args, **kwargs)')
       else:
         raise ValueError(f"Unknown ensemble model: {ensemble_model}")
       
-      model.feature_method = 'tf-idf, tf-idf_ngram, bag_of_characters'
+      
       # self.data_manager.x_train, self.data_manager.x_test
       model.fit(self.data_manager.x_train, self.data_manager.y_train)
       y_pred = model.predict(self.data_manager.x_test)
@@ -91,8 +92,14 @@ class TestManager:
           'method': 'ensemble_1',
           'feature_size': model.feature_size,
       }
-      self.model = self #this will be the saved pickle file
+      self.model = model #this will be the saved pickle file
       self.__evaluations(self.data_manager.y_test, y_pred, model, feature_extractor)
+      # Save the trained model
+      if int(self.config['settings']['save_models']) != 0:
+        timestamp = int(time.time())
+        file_name = (Path(self.config['models']['dir']) 
+                    / f"{model.model_name}_{feature_extractor.method}_{timestamp}.pkl")
+        model.save_model(file_name) #doesn't work
 
       
 
