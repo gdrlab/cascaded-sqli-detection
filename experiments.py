@@ -5,7 +5,7 @@ import pandas as pd
 
 from templates import FeatureExtractor, logger
 from classical_models import Classical_Model
-from ensemble_models import Ensemble_1
+from ensemble_models import Ensemble_1, Ensemble_2
 
 class TestManager:
   def __init__(self, data_manager, config):
@@ -79,7 +79,9 @@ class TestManager:
         model.feature_method = 'tf-idf, tf-idf_ngram, bag_of_characters'
         feature_extractor = FeatureExtractor('ensemble_1') # dummy feature ext. just for keeping latency notes.
       elif ensemble_model == 'ensemble_2':
-        print('self.model = svm.SVC(*args, **kwargs)')
+        model = Ensemble_2(self.data_manager , self.models_dict, self.feature_extractors_dict)
+        model.feature_method = 'tf-idf, tf-idf_ngram, bag_of_characters'
+        feature_extractor = FeatureExtractor('ensemble_2') # dummy feature ext. just for keeping latency notes.
       else:
         raise ValueError(f"Unknown ensemble model: {ensemble_model}")
       
