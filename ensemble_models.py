@@ -1,7 +1,11 @@
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.ensemble import VotingClassifier
 from templates import Model
+import xgboost as xgb
+from sklearn import svm
+from sklearn.naive_bayes import MultinomialNB
 import numpy as np
+import time
 
 # majority voting
 def mv(arr):
@@ -131,6 +135,89 @@ class Ensemble_2(Model):
 
     return final
 
+## Ensemble 4
+class Ensemble_4(Model):
+  def __init__(self, data_mgr, pretrained_models_dict, extractors_dict ):
+    self.pretrained_models_dict = pretrained_models_dict
+    self.extractors_dict = extractors_dict
+    self.data_manager = data_mgr
+    self.results = []
+    self.submodel = []
+    self.subfeature_extractor = []
+    self.train_latency = 0.0
+    self.feature_latency = 0.0
+    self.feature_size = 0
+    self.model = None #this will be itself
+    self.combined_features = None
+    self.pipeline_list = []
+    super().__init__( 'ensemble_4')
+    
+
+  def _create_model(self, *args, **kwargs):
+    feature_ext_list = ['tf-idf', 'tf-idf_ngram', 'bag_of_characters']
+    estimator_list = ['naive_bayes', 'xgboost', 'svm']
+    idx = 0
+    
+    self.submodel.append(xgb.XGBClassifier(*args, **kwargs))
+    self.submodel.append(svm.SVC(*args, **kwargs))
+    self.submodel.append(MultinomialNB(*args, **kwargs))
+      
+    for fe in feature_ext_list:
+      self.subfeature_extractor.append(self.extractors_dict[fe].vectorizer)
+    
+    # https://scikit-learn.org/stable/auto_examples/compose/plot_feature_union.html
+    self.combined_features = FeatureUnion([
+      ("tf-idf", self.subfeature_extractor[0]), 
+      ("tf-idf_ngram", self.subfeature_extractor[1]), 
+      ("bag_of_characters", self.subfeature_extractor[2])])
+
+
+  def _submodel_fit(self, x_train, y_train, *args, **kwargs):
+    latency = 0.0
+    train_latency = 0.0
+    feature_latency = 0.0
+
+    # Use combined features to transform dataset:
+    start_time = time.perf_counter()
+    X_features = self.combined_features.fit(x_train, y_train).transform(x_train)
+    end_time = time.perf_counter()
+    self.feature_latency = end_time - start_time
+    #print("Combined space has", X_features.shape[1], "features")
+    self.feature_size = X_features.shape[1]
+
+    estimator_list = ['naive_bayes', 'xgboost', 'svm']
+    self.pipeline_list.append(Pipeline([("features", self.combined_features), 
+                          (estimator_list[0], self.submodel[0])])
+    )
+    self.pipeline_list.append(Pipeline([("features", self.combined_features), 
+                          (estimator_list[1], self.submodel[1])])
+    )
+    self.pipeline_list.append(Pipeline([("features", self.combined_features), 
+                          (estimator_list[2], self.submodel[2])])
+    )
+    
+    start_time = time.perf_counter()
+    for i in range(len(self.pipeline_list)):
+      self.pipeline_list[i].fit(x_train, y_train)
+    end_time = time.perf_counter()
+    self.train_latency = end_time - start_time
+
+    latency = train_latency + feature_latency
+    self.notes['train_time'] = latency
+    return latency
+
+  def _submodel_predict(self, x_test, *args, **kwargs):
+    pred_list = []
+    for i in range(len(self.pipeline_list)):
+      pred_list.append(
+        self.pipeline_list[i].predict(x_test)
+      )
+    
+    pred_list = np.asarray(pred_list)
+    pred_pipe_all = mv(pred_list[0:3]) 
+    final = pred_pipe_all
+
+    return final
                         
 
     
