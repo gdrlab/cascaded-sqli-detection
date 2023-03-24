@@ -62,6 +62,7 @@ Classical ML methods work in Mamba environment without GPU support. Bert models 
 - Only 'all' command might work properly. The others have not been tested after modifications.
 ## Release notes
 - Release (version TBA)
+  - OOP is used to modularize the code.
   - 
 - Release (0.3.0) Latex table generation
   - The results are saved to a pkl file in the main folder.

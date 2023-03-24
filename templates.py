@@ -19,7 +19,9 @@ class DataManager:
     self.split_data()
 
   def load_data(self):
-    self.dataset = pd.read_csv(Path(self.config['dataset']['path']), sep='\t', engine='python')
+    file_name = Path(self.config['dataset']['file'])
+    file = 'datasets' / file_name
+    self.dataset = pd.read_csv(file, sep='\t', engine='python')
     logger.info(f"Loaded dataset with {len(self.dataset)} rows.")
 
   def split_data(self):
@@ -53,21 +55,21 @@ class FeatureExtractor:
 
   def extract_features(self, x_train, x_test):
     start_time = time.perf_counter()
+    # Tokenizer to remove unwanted elements from out data like symbols and numbers
+    token = RegexpTokenizer(r'[a-zA-Z0-9]+')
 
     if self.method == 'tf-idf':
-      self.vectorizer = TfidfVectorizer(*self.args, **self.kwargs)
+      self.vectorizer = TfidfVectorizer(tokenizer = token.tokenize, *self.args, **self.kwargs)
     elif self.method == 'tf-idf_ngram':
-      # Tokenizer to remove unwanted elements from out data like symbols and numbers
-      token = RegexpTokenizer(r'[a-zA-Z0-9]+')
       # Using N-Gram 
       self.vectorizer = TfidfVectorizer(
         lowercase=True, stop_words='english', 
         ngram_range = (1, 3), # TODO: parametrize range in config file
         tokenizer = token.tokenize, analyzer='char')
     elif self.method == 'bag_of_words':
-      self.vectorizer = CountVectorizer(analyzer='word', **self.kwargs)
+      self.vectorizer = CountVectorizer(analyzer='word',  **self.kwargs)
     elif self.method == 'bag_of_characters':
-      self.vectorizer = CountVectorizer(analyzer='char', **self.kwargs)
+      self.vectorizer = CountVectorizer(analyzer='char', tokenizer = token.tokenize, **self.kwargs)
     elif self.method in ['ensemble_1', 'ensemble_2', 'ensemble_4']:
       self.vectorizer = None # created just for keeping latencies
     else:
@@ -121,17 +123,17 @@ class Model:
     latency = self._submodel_fit(x_train, y_train, *args, **kwargs)
     end_time = time.perf_counter()
     if latency != 0:
-      self.notes['train_time'] = latency
+      self.notes['train_time'] = latency # ensemble models calculate themselves
     else:
-      self.notes['train_time'] = end_time - start_time
-    logger.info(f"Ended training {self.model_name} in: {self.notes['train_time']}sec")
+      self.notes['train_time'] = (end_time - start_time)*1000 / x_train.shape[0] #ms per sample
+    logger.info(f"Ended training {self.model_name} in: {end_time - start_time}s")
 
   def predict(self, x_test, *args, **kwargs):
     start_time = time.perf_counter()
     y_pred = self._submodel_predict(x_test, *args, **kwargs)
     end_time = time.perf_counter()
 
-    self.notes['pred_time'] = end_time - start_time
+    self.notes['pred_time'] = (end_time - start_time)*1000 / x_test.shape[0] #ms per sample
     return y_pred
 
   def save_model(self, file_name):

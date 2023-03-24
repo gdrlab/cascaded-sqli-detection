@@ -181,7 +181,7 @@ class Ensemble_4(Model):
     start_time = time.perf_counter()
     X_features = self.combined_features.fit(x_train, y_train).transform(x_train)
     end_time = time.perf_counter()
-    self.feature_latency = end_time - start_time
+    self.feature_latency = (end_time - start_time)*1000/x_train.shape[0]
     #print("Combined space has", X_features.shape[1], "features")
     self.feature_size = X_features.shape[1]
 
@@ -200,7 +200,7 @@ class Ensemble_4(Model):
     for i in range(len(self.pipeline_list)):
       self.pipeline_list[i].fit(x_train, y_train)
     end_time = time.perf_counter()
-    self.train_latency = end_time - start_time
+    self.train_latency = (end_time - start_time)*1000/x_train.shape[0]
 
     latency = train_latency + feature_latency
     self.notes['train_time'] = latency
