@@ -7,6 +7,32 @@ from templates import FeatureExtractor, logger
 from classical_models import Classical_Model
 from ensemble_models import Ensemble_1, Ensemble_2, Ensemble_4
 
+def evaluate(y_test, y_pred, notes):
+  accuracy = accuracy_score(y_test, y_pred)
+  precision = precision_score(y_test, y_pred)
+  recall = recall_score(y_test, y_pred)
+  f1 = f1_score(y_test, y_pred)
+  tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+
+  result = {
+    'accuracy': accuracy,
+    'precision': precision,
+    'recall': recall,
+    'f1_score': f1,
+    'tp': tp,
+    'tn': tn,
+    'fp': fp,
+    'fn': fn
+  }
+
+  result.update(notes)
+  return result
+
+
+def save_results(results_dict, dest_file):
+  results_df = pd.DataFrame(results_dict)
+  results_df.to_csv(dest_file, index=False)
+
 class TestManager:
   def __init__(self, data_manager, config):
     self.data_manager = data_manager
@@ -16,30 +42,17 @@ class TestManager:
     self.models_dict = {}
 
   def __evaluations(self, y_test, y_pred, model, feature_extractor):
-    accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred)
-    recall = recall_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred)
-    tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-
-    result = {
+    notes = {
       'feature_method': model.feature_method,
-      'model': model.model_name,
-      'accuracy': accuracy,
-      'precision': precision,
-      'recall': recall,
-      'f1_score': f1,
-      'tp': tp,
-      'tn': tn,
-      'fp': fp,
-      'fn': fn
+      'model': model.model_name
     }
 
-    result.update(self.data_manager.notes)
-    result.update(feature_extractor.notes)
-    result.update(model.notes)
-    result.update({'dataset': self.config['dataset']['path']})
-    self.results.append(result)
+    notes.update(self.data_manager.notes)
+    notes.update(feature_extractor.notes)
+    notes.update(model.notes)
+    notes.update({'dataset': self.config['dataset']['file']})
+    self.results.append(evaluate(y_test, y_pred, notes))
+    
 
   def __features_models_cartesian_tests(self, feature_methods, models):
     for feature_method in feature_methods:
@@ -110,10 +123,9 @@ class TestManager:
       
 
   def __save_results(self, dir):
-    results_df = pd.DataFrame(self.results)
     timestamp = int(time.time())
     file_name = Path(dir) / f"results_{timestamp}.csv"
-    results_df.to_csv(file_name, index=False)
+    save_results(self.results, dest_file=file_name)
     logger.info(f"Results saved to {file_name}")
 
   def run_tests(self, feature_methods, classic_models, ensemble_models):
