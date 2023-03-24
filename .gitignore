@@ -4,8 +4,12 @@ package.egg-info/
 dist/
 build/
 datasets/*
+results/*
+trained_models/*
 # exception to the rule
 !datasets/.gitkeep
+!results/.gitkeep
+!trained_models/.gitkeep
 .ipynb_checkpoints 
 __pycache__
 .vscode
