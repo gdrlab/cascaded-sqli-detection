@@ -29,17 +29,29 @@ def evaluate(y_test, y_pred, notes):
   return result
 
 
-def save_results(results_dict, dest_file):
+def save_results(results_dict, dest_file, *args, **kwargs):
+  header=True
+  for key, value in kwargs.items():
+    print("{} is {}".format(key,value))
+    if key == 'header':
+      header=value
+  
   results_df = pd.DataFrame(results_dict)
-  results_df.to_csv(dest_file, index=False)
+  if dest_file.is_file():
+    df = pd.read_csv(dest_file)
+    results_df = pd.concat([df, results_df])
+    print('Appending to the existing .csv file.')
+
+  results_df.to_csv(dest_file,  index=False, header=header) 
 
 class TestManager:
-  def __init__(self, data_manager, config):
+  def __init__(self, data_manager, config, output_file_name=''):
     self.data_manager = data_manager
     self.results = []
     self.config = config
     self.feature_extractors_dict = {}
     self.models_dict = {}
+    self.output_file_name = output_file_name
 
   def __evaluations(self, y_test, y_pred, model, feature_extractor):
     notes = {
@@ -99,6 +111,9 @@ class TestManager:
         model = Ensemble_4(self.data_manager , self.models_dict, self.feature_extractors_dict)
         model.feature_method = 'tf-idf, tf-idf_ngram, bag_of_characters'
         feature_extractor = FeatureExtractor('ensemble_4') # dummy feature ext. just for keeping latency notes.
+      elif ensemble_model == '':
+        print('No ensemble method selected in config.ini file.')
+        continue
       else:
         raise ValueError(f"Unknown ensemble model: {ensemble_model}")
       
@@ -123,10 +138,16 @@ class TestManager:
       
 
   def __save_results(self, dir):
-    timestamp = int(time.time())
-    file_name = Path(dir) / f"results_{timestamp}.csv"
-    save_results(self.results, dest_file=file_name)
-    logger.info(f"Results saved to {file_name}")
+    if self.output_file_name == '':
+      timestamp = int(time.time())
+      file_name = Path(dir) / f"results_{timestamp}.csv"
+    else:
+      file_name = Path(dir) / self.output_file_name
+    
+    self.output_file_name = file_name
+    save_results(self.results, dest_file=self.output_file_name, header=True)
+    logger.info(f"Results saved to {self.output_file_name}")
+    
 
   def run_tests(self, feature_methods, classic_models, ensemble_models):
     self.__features_models_cartesian_tests(feature_methods, classic_models)
