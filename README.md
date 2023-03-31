@@ -4,10 +4,10 @@ This is the implementation of "Hybrid Features Extraction Approach using Natural
 ## Requirements  
 
 - (recommended) Google Colab account, or any other Jupyter Notebook with GPU support.
-- For running on local machines, use [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge). Mamba package search is significantly faster than Anaconda (or [Anaconda](https://www.anaconda.com/products/distribution) environment)
+- (optional) If you want to run on local machines, use [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge). Mamba package search is significantly faster than Anaconda (or [Anaconda](https://www.anaconda.com/products/distribution) environment)
 ## Setup
 ### For Google Colab setup
-- Upload all files into your Google Drive (e.g. '/content/drive/MyDrive/Akademik/Research and Projects/Sakir Hoca Projects/AI Security Intelligence/Codes/20230331_sqli_colab')
+- Upload all GitHub files into your Google Drive (e.g. '/content/drive/MyDrive/Akademik/Research and Projects/Sakir Hoca Projects/AI Security Intelligence/Codes/20230331_sqli_colab')
 - Update the hardcoded paths and run 'main.ipynb'
 ### (optional) For local setup 
 You can skip this part if you use Google Colab. 
@@ -31,7 +31,7 @@ The first part (Classical ML methods) can run on virtual Python environment on W
 ### Running all
 - Modify config.ini file and run 'main.ipynb'
 
-### Running only the classical ML based methods
+### (Optional) Running only the classical ML based methods
 - Activate rafi-sqli environment in the Miniforge prompt and run the test:
     - ``` python run_classical_MLs.py -o <output file path>```
 
@@ -41,7 +41,6 @@ The first part (Classical ML methods) can run on virtual Python environment on W
 - Modify ``` utils\Demonstrate_test_results.ipynb ``` to point the result file and run it.
 
 ## Folder contents
-- TBA
 - Main folders: (datasets, utils, trained_models, results)
   - datasets: SQLi csv file with two columns:'payload' and 'label'.
   - config.ini: choose the models to be tested and other options. Note: Ensemble models need all classical MLs to be run before.
