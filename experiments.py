@@ -1,5 +1,6 @@
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, confusion_matrix
 import time
+from datetime import datetime
 from pathlib import Path
 import pandas as pd
 
@@ -123,7 +124,6 @@ class TestManager:
       y_pred = model.predict(self.data_manager.x_test)
       feature_extractor.notes = {
           'extraction_time': model.feature_latency,
-          'method': 'ensemble_1',
           'feature_size': model.feature_size,
       }
       self.model = model #this will be the saved pickle file
@@ -139,8 +139,9 @@ class TestManager:
 
   def __save_results(self, dir):
     if self.output_file_name == '':
-      timestamp = int(time.time())
-      file_name = Path(dir) / f"results_{timestamp}.csv"
+      currentDateAndTime = datetime.now()
+      currentTime = currentDateAndTime.strftime("%y%m%d_%H%M%S")
+      file_name = Path(dir) / f'results_{currentTime}.csv'
     else:
       file_name = Path(dir) / self.output_file_name
     
