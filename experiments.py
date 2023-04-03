@@ -1,4 +1,6 @@
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, confusion_matrix
+from sklearn.metrics import roc_curve, auc, accuracy_score, f1_score, precision_score, recall_score, confusion_matrix
+import matplotlib.pyplot as plt
+
 import time
 from datetime import datetime
 from pathlib import Path
@@ -135,7 +137,33 @@ class TestManager:
                     / f"{model.model_name}_{feature_extractor.method}_{timestamp}.pkl")
         model.save_model(file_name) #doesn't work
 
-      
+  def __adaptive(self, selected_feature_method, selected_model_name, threshold=0.5):
+   
+    feature_extractor = FeatureExtractor(selected_feature_method)
+    feature_extractor.extract_features(
+      self.data_manager.x_train, self.data_manager.x_test)
+    self.feature_extractors_dict.update({feature_extractor.method: feature_extractor})
+
+ 
+    model = Classical_Model(selected_model_name)
+    model.feature_method = feature_extractor.method
+    model.fit(
+      feature_extractor.features['train'], self.data_manager.y_train)
+    
+    if model.model_name not in self.models_dict.keys():
+      self.models_dict[model.model_name] = {}
+    self.models_dict[model.model_name].update({feature_extractor.method: model})
+        
+    # Save the trained model
+    if int(self.config['settings']['save_models']) != 0:
+      timestamp = int(time.time())
+      file_name = (Path(self.config['models']['dir']) 
+                  / f"{model.model_name}_{feature_extractor.method}_{timestamp}.pkl")
+      model.save_model(file_name)
+
+    y_pred = model.predict(feature_extractor.features['test'], threshold=threshold)
+    self.__evaluations(self.data_manager.y_test, y_pred, model, feature_extractor)
+    return model      
 
   def __save_results(self, dir):
     if self.output_file_name == '':
@@ -148,9 +176,40 @@ class TestManager:
     self.output_file_name = file_name
     save_results(self.results, dest_file=self.output_file_name, header=True)
     logger.info(f"Results saved to {self.output_file_name}")
+
+  def __plot_roc(self, model):
+    # predict probabilities of positive class for the test set
+    adaptive_model = model
+    y_pred_prob = adaptive_model.model.predict_proba(
+      self.feature_extractors_dict['tf-idf_ngram'].features['test'])[:, 1]
+    #y_pred = (y_pred_prob > 0.001).astype(int)
+    #tn, fp, fn, tp = confusion_matrix(self.data_manager.y_test, y_pred).ravel()
+    #print(tn, fp, fn, tp) # 2287 1562 1 2272
+
+    # calculate the false positive rate and true positive rate for different thresholds
+    fpr, tpr, thresholds = roc_curve(self.data_manager.y_test, y_pred_prob)
+    roc_auc = auc(fpr, tpr)
+
+    # plot the ROC curve
+    plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)
+    plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic')
+    plt.legend(loc="lower right")
+    plt.show()
     
 
   def run_tests(self, feature_methods, classic_models, ensemble_models):
-    self.__features_models_cartesian_tests(feature_methods, classic_models)
-    self.__run_ensemble_tests(ensemble_models)
+    #self.__features_models_cartesian_tests(feature_methods, classic_models)
+    #self.__run_ensemble_tests(ensemble_models)
+    #self.__adaptive('tf-idf_ngram', 'xgboost', threshold=0.5)
+    adaptive_model = self.__adaptive('tf-idf_ngram', 'xgboost', threshold=0.3)
+    # TODO: save pred_prob and open it in display results ipython file.
+    # TODO: plot ROC for 0.0001 values as well(may be logarithmic in x axis?)
+    # TODO: Make a function to calculate the estimated speed vs Recall.
+    self.__plot_roc(adaptive_model)
+
     self.__save_results(Path(self.config['results']['dir']))
