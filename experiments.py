@@ -172,7 +172,7 @@ class TestManager:
       currentTime = currentDateAndTime.strftime("%y%m%d_%H%M%S")
       file_name = Path(dir) / f'results_{currentTime}.csv'
     else:
-      file_name = Path(dir) / self.output_file_name
+      file_name = Path(dir) / Path(self.output_file_name).name
     
     self.output_file_name = file_name
     save_results(self.results, dest_file=self.output_file_name, header=True)
@@ -304,6 +304,7 @@ class TestManager:
     # TODO: save pred_prob and open it in display results ipython file.
     # TODO: plot ROC for 0.0001 values as well(may be logarithmic in x axis?)
     # TODO: Make a function to calculate the estimated speed vs Recall.
-    self.__plot_roc3(file_name)
+    #self.__plot_roc3(file_name)
 
     self.__save_results(Path(self.config['results']['dir']))
+    self.results = []

@@ -23,7 +23,12 @@ def main(argv):
   classic_models = [model.strip() for model in config.get('models', 'classic_models').split(',')]
   ensemble_models = [model.strip() for model in config.get('models', 'ensemble_models').split(',')]
 
-  test_manager.run_tests(feature_methods, classic_models, ensemble_models)
+  seed_idx = 0
+  while (data_manager.split_data(seed_idx=seed_idx)): #while there are more seeds
+    print(f'Running the tests for seed: {data_manager.seed}')
+    test_manager.run_tests(feature_methods, classic_models, ensemble_models)
+    seed_idx += 1
+
   return test_manager.output_file_name
   
 

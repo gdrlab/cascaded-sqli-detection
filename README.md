@@ -51,6 +51,8 @@ The first part (Classical ML methods) can run on virtual Python environment on W
 
 - 
 ## Release notes
+- Release (vTBA)
+  - Supports multiple random seeds in config.ini file.
 - Release (v0.4.0)
   - OOP is used to modularize the code.
   - Most of the settings can be set from config.ini file.
