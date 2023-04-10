@@ -296,8 +296,8 @@ class TestManager:
 
 
   def run_tests(self, feature_methods, classic_models, ensemble_models):
-    #self.__features_models_cartesian_tests(feature_methods, classic_models)
-    #self.__run_ensemble_tests(ensemble_models)
+    self.__features_models_cartesian_tests(feature_methods, classic_models)
+    self.__run_ensemble_tests(ensemble_models)
     #self.__adaptive('tf-idf_ngram', 'xgboost', threshold=0.5)
     adaptive_model = self.__adaptive('tf-idf_ngram', 'xgboost', threshold=0.3)
     file_name = self.__save_pred_prob(adaptive_model,dir=Path(self.config['results']['dir']))
