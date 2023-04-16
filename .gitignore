@@ -10,6 +10,8 @@ trained_models/*
 !datasets/.gitkeep
 !results/.gitkeep
 !trained_models/.gitkeep
+!results/proposed_method_results.csv
+!results/results_230410_165455.csv
 .ipynb_checkpoints 
 __pycache__
 .vscode
