@@ -17,6 +17,7 @@ class DataManager:
     self.config = config
     self.load_data()
     self.split_data()
+    self.seed = None
 
   def load_data(self):
     file_name = Path(self.config['dataset']['file'])
@@ -24,8 +25,13 @@ class DataManager:
     self.dataset = pd.read_csv(file, sep='\t', engine='python')
     logger.info(f"Loaded dataset with {len(self.dataset)} rows.")
 
-  def split_data(self):
-    seed = int(self.config['data_manager']['seed'])
+  def split_data(self, seed_idx=0):
+    seeds = [int(sd.strip()) for sd in self.config.get('data_manager', 'seed').split(',')]
+    if seed_idx<len(seeds):
+      seed = seeds[seed_idx] #int(self.config['data_manager']['seed'])
+      self.seed = seed
+    else:
+      return False
     split_ratio = float(self.config['data_manager']['split_ratio'])
 
     self.train, self.test = train_test_split(
@@ -42,6 +48,7 @@ class DataManager:
       'train_size': len(self.train),
       'test_size': len(self.test),
     }
+    return True
 
 
 class FeatureExtractor:
@@ -114,7 +121,19 @@ class Model:
 
   def _submodel_predict(self, x_test, *args, **kwargs):
     y_pred = []
-    y_pred = self.model.predict(x_test, *args, **kwargs)
+    threshold = None
+    for key, value in kwargs.items():
+    #print("{} is {}".format(key,value))
+      if key == 'threshold':
+        threshold=value
+        y_pred_prob = self.model.predict_proba(x_test)[:, 1] #xgboost pred prob.
+        y_pred = (y_pred_prob > threshold).astype(int)
+        self.notes['threshold'] = threshold
+
+    if threshold is None:
+      y_pred = self.model.predict(x_test, *args, **kwargs)
+      self.notes['threshold'] = 0.5
+
     return y_pred
 
   def fit(self, x_train, y_train, *args, **kwargs):
