@@ -51,7 +51,9 @@ The first part (Classical ML methods) can run on virtual Python environment on W
 
 - 
 ## Release notes
-- Release (vTBA)
+- Release (v0.5.0)
+  - Adaptive method is implemented. XGboost is being trained with 5000x positive weight, 0.05 threshold in inference.
+  - The proposed method is added to the test results (Tables and Figures)
   - Supports multiple random seeds in config.ini file.
 - Release (v0.4.0)
   - OOP is used to modularize the code.
