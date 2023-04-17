@@ -1,6 +1,9 @@
 # Hybrid Features Extraction Approach using Natural Language Processing for Improved Detection of SQL Injection Attack
-
 This is the implementation of "Hybrid Features Extraction Approach using Natural Language Processing for Improved Detection of SQL Injection Attack" algorithm. It can load the custom datasets, train various models and demonstrate their inference performances. 
+<img width="741" alt="cascade" src="https://user-images.githubusercontent.com/6195512/232533613-5eb44761-1967-43e8-91a0-b064a6513107.png">
+![image](https://user-images.githubusercontent.com/6195512/232533427-62c1af87-194e-497c-8780-f00a13b0337c.png)
+
+
 ## Requirements  
 
 - (recommended) Google Colab account, or any other Jupyter Notebook with GPU support.
