@@ -1,0 +1,21 @@
+name: sqli-env
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python
+  #- tf-models-official
+  - tensorflow
+  - tensorflow-hub
+  - nltk
+  - scikit-learn
+  - pandas
+  #- pandas-profiling
+  - xgboost
+  - jupyter
+  - scipy
+  - numpy
+  - seaborn
+  - scienceplots 
+  - mscorefonts
+  #- wandb
