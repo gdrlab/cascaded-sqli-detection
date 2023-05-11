@@ -77,7 +77,7 @@ class FeatureExtractor:
       self.vectorizer = CountVectorizer(analyzer='word',  **self.kwargs)
     elif self.method == 'bag_of_characters':
       self.vectorizer = CountVectorizer(analyzer='char', tokenizer = token.tokenize, **self.kwargs)
-    elif self.method in ['ensemble_1', 'ensemble_2', 'ensemble_4']:
+    elif self.method in ['ensemble_1', 'ensemble_2', 'ensemble_3']:
       self.vectorizer = None # created just for keeping latencies
     else:
       raise ValueError(

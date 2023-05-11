@@ -33,8 +33,8 @@ class Ensemble_1(Model):
     self.model = None #this will be itself
 
   def _create_model(self, *args, **kwargs):
-    feature_ext_list = ['tf-idf', 'tf-idf_ngram', 'bag_of_characters']
-    estimator_list = ['naive_bayes', 'xgboost', 'svm']
+    feature_ext_list = ['tf-idf', 'tf-idf_ngram', 'bag_of_characters'] 
+    estimator_list = ['MultinomialNB', 'XGBoost', 'SVM_RBF'] # XGBoost, MultinomialNB, SVM_RBF
     idx = 0
     for es in estimator_list:
       for fe in feature_ext_list:
@@ -93,7 +93,7 @@ class Ensemble_2(Model):
 
   def _create_model(self, *args, **kwargs):
     feature_ext_list = ['tf-idf', 'tf-idf_ngram', 'bag_of_characters']
-    estimator_list = ['naive_bayes', 'xgboost', 'svm']
+    estimator_list = ['MultinomialNB', 'XGBoost', 'SVM_RBF'] # XGBoost, MultinomialNB, SVM_RBF
     
     for fe in feature_ext_list:
       for es in estimator_list:
@@ -135,8 +135,8 @@ class Ensemble_2(Model):
 
     return final
 
-## Ensemble 4
-class Ensemble_4(Model):
+## Ensemble 3
+class Ensemble_3(Model):
   def __init__(self, data_mgr, pretrained_models_dict, extractors_dict ):
     self.pretrained_models_dict = pretrained_models_dict
     self.extractors_dict = extractors_dict
@@ -150,12 +150,12 @@ class Ensemble_4(Model):
     self.model = None #this will be itself
     self.combined_features = None
     self.pipeline_list = []
-    super().__init__( 'ensemble_4')
+    super().__init__( 'ensemble_3')
     
 
   def _create_model(self, *args, **kwargs):
     feature_ext_list = ['tf-idf', 'tf-idf_ngram', 'bag_of_characters']
-    estimator_list = ['naive_bayes', 'xgboost', 'svm']
+    estimator_list = ['MultinomialNB', 'XGBoost', 'SVM_RBF'] # XGBoost, MultinomialNB, SVM_RBF
     idx = 0
     
     self.submodel.append(xgb.XGBClassifier(*args, **kwargs))
@@ -185,7 +185,7 @@ class Ensemble_4(Model):
     #print("Combined space has", X_features.shape[1], "features")
     self.feature_size = X_features.shape[1]
 
-    estimator_list = ['naive_bayes', 'xgboost', 'svm']
+    estimator_list = ['MultinomialNB', 'XGBoost', 'SVM_RBF']  # XGBoost, MultinomialNB, SVM_RBF
     self.pipeline_list.append(Pipeline([("features", self.combined_features), 
                           (estimator_list[0], self.submodel[0])])
     )
