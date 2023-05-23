@@ -129,6 +129,16 @@ class Model:
         y_pred_prob = self.model.predict_proba(x_test)[:, 1] #xgboost pred prob.
         y_pred = (y_pred_prob > threshold).astype(int)
         self.notes['threshold'] = threshold
+      elif key == 'pass_aggressive_threshold':
+        threshold=value
+        
+        #y_pred_prob = self.model.predict_proba(x_test)[:, 1] #PassiveAggressive pred prob.
+        # Get prediction scores
+        scores = self.model.decision_function(x_test)#PassiveAggressive pred prob.
+        # Make predictions based on the threshold
+        y_pred = [1 if score > threshold else 0 for score in scores]
+        #y_pred = (y_pred_prob > threshold).astype(int)
+        self.notes['pass_aggressive_threshold'] = threshold
 
     if threshold is None:
       y_pred = self.model.predict(x_test, *args, **kwargs)

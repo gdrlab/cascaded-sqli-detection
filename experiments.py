@@ -385,6 +385,61 @@ class TestManager:
     y_test = df['y_test'].values
     return y_test, y_pred_prob
 
+  # Train and evaluate the first stage
+  def __first_stage(self):
+    pass_aggressive_threshold = -0.3 #prediction
+    #scale_pos_weight = 5000.0
+    class_weights = {1: 0.999, 0: 0.001}
+    #class_weights = None
+
+    feature_method = 'tf-idf_ngram'
+    #model_name = 'XGBoost'
+    model_name = 'PassiveAggressiveClassifier'
+
+    feature_extractor = FeatureExtractor(feature_method)
+    start_time = time.time()
+    feature_extractor.extract_features(
+        self.data_manager.x_train, self.data_manager.x_test)
+    stop_time = time.time()
+    extraction_time = ((stop_time - start_time)*1000 
+                      / (len(self.data_manager.x_train) + len(self.data_manager.x_test)) )
+
+    #model = Classical_Model(model_name, scale_pos_weight=scale_pos_weight)
+    model = Classical_Model(model_name, class_weight=class_weights)
+    model.feature_method = feature_extractor.method
+    start_time = time.time()
+    model.fit(
+        feature_extractor.features['train'], 
+        self.data_manager.y_train) #scale_pos_weight=5.0
+    stop_time = time.time()
+    training_time = (stop_time - start_time)*1000 / feature_extractor.features['train'].shape[0]
+
+
+    start_time = time.time()
+    first_stage_y_pred = model.predict(feature_extractor.features['test'], pass_aggressive_threshold=pass_aggressive_threshold)
+    stop_time = time.time()
+
+    testing_time = (stop_time - start_time)*1000 / feature_extractor.features['test'].shape[0]
+
+
+    # Save results to csv file
+    notes={}
+    result = evaluate(self.data_manager.y_test, first_stage_y_pred, notes=notes)
+    print(result)
+    #save_results([result], proposed_test_results_file)
+
+    # Extract the positive predicitions for the second stage
+    first_stage_positive_preds = self.data_manager.x_test[(first_stage_y_pred == 1)]
+    first_stage_positive_preds_true_labels = self.data_manager.y_test[(first_stage_y_pred == 1)]
+    fs_pos_len = len(first_stage_positive_preds)
+    nof_test_samples = len(self.data_manager.x_test)
+    fs_rat = fs_pos_len/nof_test_samples
+    print(f"Positive predicitions in the first stage: {fs_pos_len} out of {nof_test_samples}. Ratio:{fs_rat}")
+
+    return first_stage_positive_preds, first_stage_positive_preds_true_labels
+  def run_first_stage_tests(self):
+    first_stage_y_pred, first_stage_positive_preds_true_labels = self.__first_stage()
+
 
   def run_tests(self, feature_methods, classic_models, ensemble_models):
     self.__features_models_cartesian_tests(feature_methods, classic_models)
