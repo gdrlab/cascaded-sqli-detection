@@ -124,11 +124,11 @@ class Model:
     threshold = None
     for key, value in kwargs.items():
     #print("{} is {}".format(key,value))
-      if key == 'threshold':
+      if key == 'xgboost_threshold':
         threshold=value
         y_pred_prob = self.model.predict_proba(x_test)[:, 1] #xgboost pred prob.
         y_pred = (y_pred_prob > threshold).astype(int)
-        self.notes['threshold'] = threshold
+        self.notes['xgboost_threshold'] = threshold
       elif key == 'pass_aggressive_threshold':
         threshold=value
         
@@ -142,7 +142,7 @@ class Model:
 
     if threshold is None:
       y_pred = self.model.predict(x_test, *args, **kwargs)
-      self.notes['threshold'] = 0.5
+      self.notes['def_pred_threshold'] = 0.5
 
     return y_pred
 

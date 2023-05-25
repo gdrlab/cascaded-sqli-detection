@@ -437,6 +437,7 @@ class TestManager:
     print(f"Positive predicitions in the first stage: {fs_pos_len} out of {nof_test_samples}. Ratio:{fs_rat}")
 
     return first_stage_positive_preds, first_stage_positive_preds_true_labels
+  
   def run_first_stage_tests(self):
     first_stage_y_pred, first_stage_positive_preds_true_labels = self.__first_stage()
 
