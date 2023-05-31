@@ -4,7 +4,7 @@ package.egg-info/
 dist/
 build/
 datasets/*
-results/*
+#results/*
 trained_models/*
 # exception to the rule
 !datasets/.gitkeep
