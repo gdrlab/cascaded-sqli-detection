@@ -1,5 +1,5 @@
-# Hybrid Features Extraction Approach using Natural Language Processing for Improved Detection of SQL Injection Attack
-This is the implementation of "Hybrid Features Extraction Approach using Natural Language Processing for Improved Detection of SQL Injection Attack" algorithm. It can load the custom datasets, train various models and demonstrate their inference performances. 
+# Advancing SQL Injection Detection for High-Speed Data Centers: A Novel Approach Using Cascaded NLP
+This is the implementation of "Advancing SQL Injection Detection for High-Speed Data Centers: A Novel Approach Using Cascaded NLP" algorithm. It can load the custom datasets, train various models including the proposed two-stage cascaded NLP method and demonstrate their inference performances. 
 <img width="741" alt="cascade" src="https://user-images.githubusercontent.com/6195512/232533613-5eb44761-1967-43e8-91a0-b064a6513107.png">
 ![image](https://user-images.githubusercontent.com/6195512/232533427-62c1af87-194e-497c-8780-f00a13b0337c.png)
 
@@ -10,8 +10,8 @@ This is the implementation of "Hybrid Features Extraction Approach using Natural
 - (optional) If you want to run on local machines, use [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge). Mamba package search is significantly faster than Anaconda (or [Anaconda](https://www.anaconda.com/products/distribution) environment)
 ## Setup
 ### For Google Colab setup
-- Upload all GitHub files into your Google Drive (e.g. '/content/drive/MyDrive/Akademik/Research and Projects/Sakir Hoca Projects/AI Security Intelligence/Codes/20230331_sqli_colab')
-- Update the hardcoded paths and run 'main.ipynb'
+- Upload all GitHub files into your Google Drive (e.g. '/content/drive/MyDrive/Akademik/Research and Projects/Kasim Projects/AI Security Intelligence/Codes/20230331_sqli_colab')
+- Update the hardcoded paths in 'main.ipynb' and run 'main.ipynb' on Google Colab
 ### (optional) For local setup 
 You can skip this part if you use Google Colab. 
 
@@ -20,14 +20,14 @@ The first part (Classical ML methods) can run on virtual Python environment on W
 - Download and install the [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge) environment.
 - Open Miniforge Prompt and change current directory to the project folder. 
 - (Optional) If you have GPU and want to use it update the yml file to contain "tensorflow-gpu".(this might not work. Not tested)
-- Run the following command in the folder, where **rafi-sqli.yml** file resides. This will create a new Python environment with the required packages:
-    -  ``` mamba env create -f rafi-sqli.yml ```
+- Run the following command in the folder, where **sqli-env.yml** file resides. This will create a new Python environment with the required packages:
+    -  ``` mamba env create -f sqli-env.yml ```
 - Activate the environment
-    - ``` mamba activate rafi-sqli ```
+    - ``` mamba activate sqli-env ```
 - Install the following packages:
     - ``` pip install -q -U "tensorflow-text==2.8.*" ```
     - ``` pip install -q tf-models-official==2.7.0 ```
-    - (Note: these packages were not in conda repo. If you find it in the repo, use mamba install instead of pip)
+    - (Note: these packages were not in conda repo at the time of this project. If you find it in the repo, use mamba install instead of pip)
 
 
 ## Running
@@ -35,7 +35,7 @@ The first part (Classical ML methods) can run on virtual Python environment on W
 - Modify config.ini file and run 'main.ipynb'
 
 ### (Optional) Running only the classical ML based methods
-- Activate rafi-sqli environment in the Miniforge prompt and run the test:
+- Activate sqli-env environment in the Miniforge prompt and run the test:
     - ``` python run_classical_MLs.py -o <output file path>```
 
 
@@ -54,6 +54,9 @@ The first part (Classical ML methods) can run on virtual Python environment on W
 
 - 
 ## Release notes
+- Release (v0.6.0)
+  - 20 ML classifiers are incorporated into the tests
+  - First stage: Passive aggressive classifier, secon stage: Bert Electra base.
 - Release (v0.5.0)
   - Adaptive method is implemented. XGboost is being trained with 5000x positive weight, 0.05 threshold in inference.
   - The proposed method is added to the test results (Tables and Figures)
