@@ -1,7 +1,8 @@
 # Advancing SQL Injection Detection for High-Speed Data Centers: A Novel Approach Using Cascaded NLP
 This is the implementation of "Advancing SQL Injection Detection for High-Speed Data Centers: A Novel Approach Using Cascaded NLP" algorithm. It can load the custom datasets, train various models including the proposed two-stage cascaded NLP method and demonstrate their inference performances. 
 <img width="741" alt="cascade" src="https://user-images.githubusercontent.com/6195512/232533613-5eb44761-1967-43e8-91a0-b064a6513107.png">
-![image](https://user-images.githubusercontent.com/6195512/232533427-62c1af87-194e-497c-8780-f00a13b0337c.png)
+![all_nlp_FE_alpha_098](https://github.com/gdrlab/rafi-sqli-detection/assets/6195512/a53142d1-b4c2-4340-bd1b-def137120c20)
+
 
 
 ## Requirements  
