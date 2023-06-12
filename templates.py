@@ -77,7 +77,7 @@ class FeatureExtractor:
       self.vectorizer = CountVectorizer(analyzer='word',  **self.kwargs)
     elif self.method == 'bag_of_characters':
       self.vectorizer = CountVectorizer(analyzer='char', tokenizer = token.tokenize, **self.kwargs)
-    elif self.method in ['ensemble_1', 'ensemble_2', 'ensemble_4']:
+    elif self.method in ['ensemble_1', 'ensemble_2', 'ensemble_3']:
       self.vectorizer = None # created just for keeping latencies
     else:
       raise ValueError(
@@ -124,15 +124,25 @@ class Model:
     threshold = None
     for key, value in kwargs.items():
     #print("{} is {}".format(key,value))
-      if key == 'threshold':
+      if key == 'xgboost_threshold':
         threshold=value
         y_pred_prob = self.model.predict_proba(x_test)[:, 1] #xgboost pred prob.
         y_pred = (y_pred_prob > threshold).astype(int)
-        self.notes['threshold'] = threshold
+        self.notes['xgboost_threshold'] = threshold
+      elif key == 'pass_aggressive_threshold':
+        threshold=value
+        
+        #y_pred_prob = self.model.predict_proba(x_test)[:, 1] #PassiveAggressive pred prob.
+        # Get prediction scores
+        scores = self.model.decision_function(x_test)#PassiveAggressive pred prob.
+        # Make predictions based on the threshold
+        y_pred = [1 if score > threshold else 0 for score in scores]
+        #y_pred = (y_pred_prob > threshold).astype(int)
+        self.notes['pass_aggressive_threshold'] = threshold
 
     if threshold is None:
       y_pred = self.model.predict(x_test, *args, **kwargs)
-      self.notes['threshold'] = 0.5
+      self.notes['def_pred_threshold'] = 0.5
 
     return y_pred
 

@@ -1,3 +1,4 @@
+import json
 from sklearn.metrics import roc_curve, auc, accuracy_score, f1_score, precision_score, recall_score, confusion_matrix
 import matplotlib.pyplot as plt
 
@@ -9,8 +10,8 @@ import numpy as np
 
 from templates import FeatureExtractor, logger
 from classical_models import Classical_Model
-from ensemble_models import Ensemble_1, Ensemble_2, Ensemble_4
-
+from ensemble_models import Ensemble_1, Ensemble_2, Ensemble_3
+from tqdm import tqdm
 def evaluate(y_test, y_pred, notes):
   accuracy = accuracy_score(y_test, y_pred)
   precision = precision_score(y_test, y_pred)
@@ -36,7 +37,7 @@ def evaluate(y_test, y_pred, notes):
 def save_results(results_dict, dest_file, *args, **kwargs):
   header=True
   for key, value in kwargs.items():
-    print("{} is {}".format(key,value))
+    logger.info("{} is {}".format(key,value))
     if key == 'header':
       header=value
   
@@ -44,7 +45,7 @@ def save_results(results_dict, dest_file, *args, **kwargs):
   if dest_file.is_file():
     df = pd.read_csv(dest_file)
     results_df = pd.concat([df, results_df])
-    print('Appending to the existing .csv file.')
+    logger.info('Appending to the existing .csv file.')
 
   results_df.to_csv(dest_file,  index=False, header=header) 
 
@@ -52,9 +53,12 @@ class TestManager:
   def __init__(self, data_manager, config, output_file_name=''):
     self.data_manager = data_manager
     self.results = []
+    self.all_params = []
     self.config = config
     self.feature_extractors_dict = {}
+    self.feature_extractors_dict_for_ensemble = {}
     self.models_dict = {}
+    self.models_dict_for_ensemble = {}
     self.output_file_name = output_file_name
 
   def __evaluations(self, y_test, y_pred, model, feature_extractor):
@@ -71,17 +75,26 @@ class TestManager:
     
 
   def __features_models_cartesian_tests(self, feature_methods, models):
-    for feature_method in feature_methods:
+    total_feature_extractors = len(feature_methods)
+    total_models = len(models)
+    idx_fe = 1
+    
+    for feature_method in tqdm(feature_methods, desc='Feature extractors'):
+      logger.info(f'running {idx_fe} of {total_feature_extractors} feature extractors.')
+      idx_fe += 1
       feature_extractor = FeatureExtractor(feature_method)
       feature_extractor.extract_features(
         self.data_manager.x_train, self.data_manager.x_test)
       self.feature_extractors_dict.update({feature_extractor.method: feature_extractor})
-
-      for model_name in models:
+      idx_model = 1
+      for model_name in tqdm(models, desc='Models'):
+        logger.info(f'running {idx_model} of {total_models} models.')
+        idx_model += 1
         model = Classical_Model(model_name)
         model.feature_method = feature_extractor.method
         model.fit(
           feature_extractor.features['train'], self.data_manager.y_train)
+        model.vectorizer = feature_extractor.vectorizer 
         
         if model.model_name not in self.models_dict.keys():
           self.models_dict[model.model_name] = {}
@@ -89,32 +102,110 @@ class TestManager:
         
         # Save the trained model
         if int(self.config['settings']['save_models']) != 0:
-          timestamp = int(time.time())
-          file_name = (Path(self.config['models']['dir']) 
-                      / f"{model.model_name}_{feature_extractor.method}_{timestamp}.pkl")
-          model.save_model(file_name)
+          # save model only if it was not saved before:
+          if (model.model_name, feature_extractor.method) not in [(name,fe) for name, fe, _ in self.all_params]:
+            timestamp = int(time.time())
+            file_name = (Path(self.config['models']['dir']) 
+                        / f"{model.model_name}_{feature_extractor.method}_{timestamp}.pkl")
+            model.save_model(file_name)
 
         y_pred = model.predict(feature_extractor.features['test'])
         self.__evaluations(self.data_manager.y_test, y_pred, model, feature_extractor)
+        params = model.model.get_params()
+        #Problem: XGboost as a parameter of OneVsRest, cannot be serialized with json.dump
+        #dirty fix: just save the name, not the object
+        if 'estimator' in params:
+          params['estimator'] = type(params['estimator']).__name__
         
+        # save parameters only if it was not saved before:
+        if (model.model_name, feature_extractor.method) not in [(name,fe) for name, fe, _ in self.all_params]:
+          self.__append_model_params_file(model_name=model_name, fe=feature_extractor.method, model_params=params)
 
+  def __features_models_cartesian_for_ensembles(self, feature_methods, models):
+    total_feature_extractors = len(feature_methods)
+    total_models = len(models)
+    idx_fe = 1
+    
+    for feature_method in tqdm(feature_methods, desc='Feature extractors'):
+      logger.info(f'running {idx_fe} of {total_feature_extractors} feature extractors.')
+      idx_fe += 1
+      feature_extractor = FeatureExtractor(feature_method)
+      feature_extractor.extract_features(
+        self.data_manager.x_train, self.data_manager.x_test)
+      self.feature_extractors_dict_for_ensemble.update({feature_extractor.method: feature_extractor})
+      idx_model = 1
+      for model_name in tqdm(models, desc='Models'):
+        logger.info(f'running {idx_model} of {total_models} models.')
+        idx_model += 1
+        model = Classical_Model(model_name)
+        model.feature_method = feature_extractor.method
+        model.fit(
+          feature_extractor.features['train'], self.data_manager.y_train)
+        model.vectorizer = feature_extractor.vectorizer 
+        
+        if model.model_name not in self.models_dict_for_ensemble.keys():
+          self.models_dict_for_ensemble[model.model_name] = {}
+        self.models_dict_for_ensemble[model.model_name].update({feature_extractor.method: model})
+        
+        # Save the trained model
+        # if int(self.config['settings']['save_models']) != 0:
+        #   # save model only if it was not saved before:
+        #   if (model.model_name, feature_extractor.method) not in [(name,fe) for name, fe, _ in self.all_params]:
+        #     timestamp = int(time.time())
+        #     file_name = (Path(self.config['models']['dir']) 
+        #                 / f"{model.model_name}_{feature_extractor.method}_{timestamp}.pkl")
+        #     model.save_model(file_name)
+
+        y_pred = model.predict(feature_extractor.features['test'])
+        self.__evaluations(self.data_manager.y_test, y_pred, model, feature_extractor)
+        params = model.model.get_params()
+        #Problem: XGboost as a parameter of OneVsRest, cannot be serialized with json.dump
+        #dirty fix: just save the name, not the object
+        if 'estimator' in params:
+          params['estimator'] = type(params['estimator']).__name__
+        
+        # save parameters only if it was not saved before:
+        if (model.model_name, feature_extractor.method) not in [(name,fe) for name, fe, _ in self.all_params]:
+          self.__append_model_params_file(model_name=model_name, fe=feature_extractor.method, model_params=params)
+          
+  def __append_model_params_file(self, model_name, fe, model_params):
+    self.all_params.append((model_name, fe, model_params))
+  
+  def __save_all_params_file(self, dir):
+    if self.output_file_name == '':
+      currentDateAndTime = datetime.now()
+      currentTime = currentDateAndTime.strftime("%y%m%d_%H%M%S")
+      file_name = Path(dir) / f'results_{currentTime}.csv'
+    else:
+      file_name = Path(dir) / Path(self.output_file_name).name
+    
+    self.output_file_name = file_name
+    param_file_name = file_name.parent / file_name.with_suffix('.json').name.replace('results', 'params')
+    
+    # Save the parameters to a file
+    with open(param_file_name, 'w') as f:
+      json.dump(self.all_params, f)
+    logger.info(f"Params saved to {param_file_name}")
 
   def __run_ensemble_tests(self, ensemble_models):
+    feature_methods =  ['tf-idf', 'tf-idf_ngram', 'bag_of_characters']
+    classic_models = ['MultinomialNB', 'XGBoost', 'SVM_RBF']
+    self.__features_models_cartesian_for_ensembles(feature_methods, classic_models)
     for ensemble_model in ensemble_models:
       model = None
       feature_extractor = None
       if ensemble_model == 'ensemble_1':
-        model = Ensemble_1(self.data_manager , self.models_dict, self.feature_extractors_dict)
-        model.feature_method = 'tf-idf, tf-idf_ngram, bag_of_characters'
+        model = Ensemble_1(self.data_manager , self.models_dict_for_ensemble, self.feature_extractors_dict_for_ensemble)
+        model.feature_method = 'tf-idf, tf-idf_ngram, bag_of_characters' # XGBoost, MultinomialNB, SVM_RBF
         feature_extractor = FeatureExtractor('ensemble_1') # dummy feature ext. just for keeping latency notes.
       elif ensemble_model == 'ensemble_2':
-        model = Ensemble_2(self.data_manager , self.models_dict, self.feature_extractors_dict)
+        model = Ensemble_2(self.data_manager , self.models_dict_for_ensemble, self.feature_extractors_dict_for_ensemble)
         model.feature_method = 'tf-idf, tf-idf_ngram, bag_of_characters'
         feature_extractor = FeatureExtractor('ensemble_2') # dummy feature ext. just for keeping latency notes.
-      elif ensemble_model == 'ensemble_4':
-        model = Ensemble_4(self.data_manager , self.models_dict, self.feature_extractors_dict)
+      elif ensemble_model == 'ensemble_3':
+        model = Ensemble_3(self.data_manager , self.models_dict_for_ensemble, self.feature_extractors_dict_for_ensemble)
         model.feature_method = 'tf-idf, tf-idf_ngram, bag_of_characters'
-        feature_extractor = FeatureExtractor('ensemble_4') # dummy feature ext. just for keeping latency notes.
+        feature_extractor = FeatureExtractor('ensemble_3') # dummy feature ext. just for keeping latency notes.
       elif ensemble_model == '':
         print('No ensemble method selected in config.ini file.')
         continue
@@ -294,17 +385,75 @@ class TestManager:
     y_test = df['y_test'].values
     return y_test, y_pred_prob
 
+  # Train and evaluate the first stage
+  def __first_stage(self):
+    pass_aggressive_threshold = -0.3 #prediction
+    #scale_pos_weight = 5000.0
+    class_weights = {1: 0.999, 0: 0.001}
+    #class_weights = None
+
+    feature_method = 'tf-idf_ngram'
+    #model_name = 'XGBoost'
+    model_name = 'PassiveAggressiveClassifier'
+
+    feature_extractor = FeatureExtractor(feature_method)
+    start_time = time.time()
+    feature_extractor.extract_features(
+        self.data_manager.x_train, self.data_manager.x_test)
+    stop_time = time.time()
+    extraction_time = ((stop_time - start_time)*1000 
+                      / (len(self.data_manager.x_train) + len(self.data_manager.x_test)) )
+
+    #model = Classical_Model(model_name, scale_pos_weight=scale_pos_weight)
+    model = Classical_Model(model_name, class_weight=class_weights)
+    model.feature_method = feature_extractor.method
+    start_time = time.time()
+    model.fit(
+        feature_extractor.features['train'], 
+        self.data_manager.y_train) #scale_pos_weight=5.0
+    stop_time = time.time()
+    training_time = (stop_time - start_time)*1000 / feature_extractor.features['train'].shape[0]
+
+
+    start_time = time.time()
+    first_stage_y_pred = model.predict(feature_extractor.features['test'], pass_aggressive_threshold=pass_aggressive_threshold)
+    stop_time = time.time()
+
+    testing_time = (stop_time - start_time)*1000 / feature_extractor.features['test'].shape[0]
+
+
+    # Save results to csv file
+    notes={}
+    result = evaluate(self.data_manager.y_test, first_stage_y_pred, notes=notes)
+    print(result)
+    #save_results([result], proposed_test_results_file)
+
+    # Extract the positive predicitions for the second stage
+    first_stage_positive_preds = self.data_manager.x_test[(first_stage_y_pred == 1)]
+    first_stage_positive_preds_true_labels = self.data_manager.y_test[(first_stage_y_pred == 1)]
+    fs_pos_len = len(first_stage_positive_preds)
+    nof_test_samples = len(self.data_manager.x_test)
+    fs_rat = fs_pos_len/nof_test_samples
+    print(f"Positive predicitions in the first stage: {fs_pos_len} out of {nof_test_samples}. Ratio:{fs_rat}")
+
+    return first_stage_positive_preds, first_stage_positive_preds_true_labels
+  
+  def run_first_stage_tests(self):
+    first_stage_y_pred, first_stage_positive_preds_true_labels = self.__first_stage()
+
 
   def run_tests(self, feature_methods, classic_models, ensemble_models):
     self.__features_models_cartesian_tests(feature_methods, classic_models)
     self.__run_ensemble_tests(ensemble_models)
+    
     #self.__adaptive('tf-idf_ngram', 'xgboost', threshold=0.5)
-    adaptive_model = self.__adaptive('tf-idf_ngram', 'xgboost', threshold=0.3)
-    file_name = self.__save_pred_prob(adaptive_model,dir=Path(self.config['results']['dir']))
+    #adaptive_model = self.__adaptive('tf-idf_ngram', 'xgboost', threshold=0.3)
+    #file_name = self.__save_pred_prob(adaptive_model,dir=Path(self.config['results']['dir']))
     # TODO: save pred_prob and open it in display results ipython file.
     # TODO: plot ROC for 0.0001 values as well(may be logarithmic in x axis?)
     # TODO: Make a function to calculate the estimated speed vs Recall.
     #self.__plot_roc3(file_name)
 
     self.__save_results(Path(self.config['results']['dir']))
+    self.__save_all_params_file(Path(self.config['results']['dir']))
     self.results = []
