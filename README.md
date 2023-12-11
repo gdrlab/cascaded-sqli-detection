@@ -1,3 +1,7 @@
+<a target="_blank" href="https://colab.research.google.com/github/gdrlab/cascaded-sqli-detection/blob/colab/main.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
 # Advancing SQL Injection Detection for High-Speed Data Centers: A Novel Approach Using Cascaded NLP
 This is the implementation of "Advancing SQL Injection Detection for High-Speed Data Centers: A Novel Approach Using Cascaded NLP" algorithm. It can load the custom datasets, train various models including the proposed two-stage cascaded NLP method and demonstrate their inference performances. 
 <img width="741" alt="cascade" src="https://user-images.githubusercontent.com/6195512/232533613-5eb44761-1967-43e8-91a0-b064a6513107.png">
