@@ -1,7 +1,4 @@
-# TODO
-- dont forget to change the link from colab to main branch at the end!
-- 
-<a target="_blank" href="https://colab.research.google.com/github/gdrlab/cascaded-sqli-detection/blob/colab/main.ipynb">
+<a target="_blank" href="https://colab.research.google.com/github/gdrlab/cascaded-sqli-detection/blob/main/main.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
@@ -17,9 +14,6 @@ This is the implementation of "Advancing SQL Injection Detection for High-Speed 
 - (recommended) Google Colab account, or any other Jupyter Notebook with GPU support.
 - (optional) If you want to run on local machines, use [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge). Mamba package search is significantly faster than Anaconda (or [Anaconda](https://www.anaconda.com/products/distribution) environment)
 ## Setup
-### For Google Colab setup
-- Upload all GitHub files into your Google Drive (e.g. '/content/drive/MyDrive/Akademik/Research and Projects/Kasim Projects/AI Security Intelligence/Codes/20230331_sqli_colab')
-- Update the hardcoded paths in 'main.ipynb' and run 'main.ipynb' on Google Colab
 ### (optional) For local setup 
 You can skip this part if you use Google Colab. 
 
@@ -62,6 +56,9 @@ The first part (Classical ML methods) can run on virtual Python environment on W
 
 - 
 ## Release notes
+- Current ()
+  - Visualization and train parts are merged into single Colab file.
+  - Single click run from Github is added (colab link at top of README)
 - Release (v0.6.0)
   - 20 ML classifiers are incorporated into the tests
   - First stage: Passive aggressive classifier, secon stage: Bert Electra base.
