@@ -43,20 +43,20 @@ The first part (Classical ML methods) can run on virtual Python environment on W
 
 ## Demonstrating the experimental results
 
-- Modify ``` utils\Demonstrate_test_results.ipynb ``` to point the result file and run it.
+- See the Visualize section of main.ipynb file.
 
 ## Folder contents
 - Main folders: (datasets, utils, trained_models, results)
   - datasets: SQLi csv file with two columns:'payload' and 'label'.
   - config.ini: choose the models to be tested and other options. Note: Ensemble models need all classical MLs to be run before.
   - utils   
-    - Demonstrate test results : produce all visuals and tables used in the paper.
+    - ds cleaning
 
 ## Troubleshot
 
 - 
 ## Release notes
-- Current ()
+- Current (v0.7.0)
   - Visualization and train parts are merged into single Colab file.
   - Single click run from Github is added (colab link at top of README)
 - Release (v0.6.0)
