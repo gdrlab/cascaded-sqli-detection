@@ -1,3 +1,6 @@
+# TODO
+- dont forget to change the link from colab to main branch at the end!
+- 
 <a target="_blank" href="https://colab.research.google.com/github/gdrlab/cascaded-sqli-detection/blob/colab/main.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
