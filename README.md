@@ -2,6 +2,8 @@
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
+Paper: [https://arxiv.org/abs/2312.13041](https://arxiv.org/abs/2312.13041)
+
 # Advancing SQL Injection Detection for High-Speed Data Centers: A Novel Approach Using Cascaded NLP
 This is the implementation of "Advancing SQL Injection Detection for High-Speed Data Centers: A Novel Approach Using Cascaded NLP" algorithm. It can load the custom datasets, train various models including the proposed two-stage cascaded NLP method and demonstrate their inference performances. 
 <img width="741" alt="cascade" src="https://user-images.githubusercontent.com/6195512/232533613-5eb44761-1967-43e8-91a0-b064a6513107.png">
@@ -54,7 +56,9 @@ The first part (Classical ML methods) can run on virtual Python environment on W
 
 ## Troubleshot
 
-- 
+
+## Acknowledments
+- The dataset used in the paper is from [Kaggle](https://www.kaggle.com/datasets/sajid576/sql-injection-dataset).
 ## Release notes
 - Current (v0.7.0)
   - Visualization and train parts are merged into single Colab file.
