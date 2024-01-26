@@ -1,6 +1,4 @@
-<a target="_blank" href="https://colab.research.google.com/github/gdrlab/cascaded-sqli-detection/blob/main/main.ipynb">
-  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>  
-
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gdrlab/cascaded-sqli-detection/blob/main/main.ipynb)
 [![arXiv](https://img.shields.io/badge/arXiv-2312.13041-b31b1b.svg)](https://arxiv.org/abs/2312.13041)
 
 Paper: [https://arxiv.org/abs/2312.13041](https://arxiv.org/abs/2312.13041)
